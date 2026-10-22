@@ -7,7 +7,7 @@ let routeLayer = null;
 
 // Initialize Mapbox Map
 function initializeMap(containerId, center = [77.5946, 12.9716], zoom = 12) {
-  mapboxgl.accessToken = MAPBOX_TOKEN || 'pk.eyJ1IjoiZGVtbyIsImEiOiJjbGV4YW1wbGUifQ.demo';
+  mapboxgl.accessToken = window.__ENV__?.MAPBOX_TOKEN || (typeof MAPBOX_TOKEN !== 'undefined' ? MAPBOX_TOKEN : 'YOUR_MAPBOX_ACCESS_TOKEN');
   
   map = new mapboxgl.Map({
     container: containerId,
