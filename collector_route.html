@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Route Map - Sarathi Waste Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS (Free OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Leaflet Search Control -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  
+  <style>
+    :root {
+      --collector-primary: #3b82f6;
+      --collector-secondary: #2563eb;
+      --collector-accent: #60a5fa;
+      --collector-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: var(--collector-gradient);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #60a5fa;
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-left-color: #60a5fa;
+      color: white;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .page-title h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .collector-status {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .status-badge.online {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .status-badge.offline {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .status-badge.moving {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #3b82f6;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Search Bar */
+    .search-bar {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .btn-search {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-search:hover {
+      background: #2563eb;
+    }
+
+    /* Route Info */
+    .route-info {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .route-stat {
+      text-align: center;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .route-stat .label {
+      color: #6b7280;
+      font-size: 12px;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .route-stat .value {
+      color: #1f2937;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .route-stat .value i {
+      color: #3b82f6;
+      margin-right: 5px;
+    }
+
+    /* Map Container */
+    #map-container {
+      width: 100%;
+      height: 500px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      z-index: 1;
+    }
+
+    /* Controls */
+    .map-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #3b82f6;
+      border: 1px solid #3b82f6;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    /* Legend */
+    .legend {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .legend-color.you {
+      background: #3b82f6;
+    }
+
+    .legend-color.pending {
+      background: #f59e0b;
+    }
+
+    .legend-color.assigned {
+      background: #8b5cf6;
+    }
+
+    .legend-color.in-progress {
+      background: #10b981;
+    }
+
+    .legend-text {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* Live Tracking Indicator */
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      background: #fee2e2;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #dc2626;
+    }
+
+    .live-indicator.active {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .live-indicator i {
+      font-size: 8px;
+    }
+
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .collector-status {
+        flex-direction: column;
+      }
+
+      .search-bar {
+        flex-direction: column;
+      }
+
+      .map-controls {
+        flex-direction: column;
+      }
+
+      #map-container {
+        height: 350px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-truck"></i>
+          <span>Sarathi Collector</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="collector_dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="collector_tasks.html" class="nav-link">
+            <i class="fas fa-tasks"></i><span>My Tasks</span></a></li>
+          <li><a href="collector_scanner.html" class="nav-link">
+            <i class="fas fa-qrcode"></i><span>QR Scanner</span></a></li>
+          <li><a href="collector_route.html" class="nav-link active">
+            <i class="fas fa-map-marked-alt"></i><span>Route Map</span></a></li>
+          <li><a href="collector_history.html" class="nav-link">
+            <i class="fas fa-history"></i><span>History</span></a></li>
+          <li><a href="collector_profile.html" class="nav-link">
+            <i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="user-email" id="userEmail">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Route Map</h1>
+          <p>Live tracking and route optimization</p>
+        </div>
+        <div class="collector-status">
+          <div class="live-indicator" id="liveIndicator">
+            <i class="fas fa-circle pulse"></i>
+            <span id="liveStatus">Live Tracking Active</span>
+          </div>
+          <span class="status-badge online" id="statusBadge">
+            <i class="fas fa-circle"></i> <span id="statusText">Online</span>
+          </span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="availabilityToggle" checked onchange="toggleAvailability()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </header>
+
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search for a location...">
+        <button class="btn-search" onclick="searchLocation()">
+          <i class="fas fa-search"></i> Search
+        </button>
+        <button class="btn-outline" onclick="getCurrentLocation()">
+          <i class="fas fa-location-arrow"></i> My Location
+        </button>
+      </div>
+
+      <!-- Route Info -->
+      <div class="route-info" id="routeInfo">
+        <div class="route-stat">
+          <span class="label">Total Stops</span>
+          <span class="value" id="routeStops">0</span>
+        </div>
+        <div class="route-stat">
+          <span class="label">Total Distance</span>
+          <span class="value" id="routeDistance">0 km</span>
+        </div>
+        <div class="route-stat">
+          <span class="label">Est. Time</span>
+          <span class="value" id="routeTime">0 min</span>
+        </div>
+        <div class="route-stat">
+          <span class="label">Next Stop</span>
+          <span class="value" id="nextStop">--</span>
+        </div>
+      </div>
+
+      <!-- Map Controls -->
+      <div class="map-controls">
+        <button class="btn-primary" onclick="startLiveTracking()" id="btnStartTracking">
+          <i class="fas fa-play"></i> Start Live Tracking
+        </button>
+        <button class="btn-outline" onclick="stopLiveTracking()">
+          <i class="fas fa-stop"></i> Stop Tracking
+        </button>
+        <button class="btn-success" onclick="optimizeRoute()">
+          <i class="fas fa-route"></i> Optimize Route
+        </button>
+        <button class="btn-outline" onclick="centerMap()">
+          <i class="fas fa-crosshairs"></i> Center Map
+        </button>
+        <button class="btn-success" id="btnArrived" onclick="markArrived()" style="display:none;" disabled>
+          <i class="fas fa-check-circle"></i> I Am Arrived
+        </button>
+        <button class="btn-primary" id="btnScanQr" onclick="openQrScanner()" style="display:none;">
+          <i class="fas fa-qrcode"></i> Scan QR
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: #6b7280;">Loading route map...</p>
+      </div>
+
+      <!-- Map Container -->
+      <div id="map-container"></div>
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-item">
+          <span class="legend-color you"></span>
+          <span class="legend-text">Your Location (Live)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color pending"></span>
+          <span class="legend-text">Pending</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color assigned"></span>
+          <span class="legend-text">Assigned</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color in-progress"></span>
+          <span class="legend-text">In Progress</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- QR Scanner Modal -->
+  <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:20px; border-radius:12px; width:90%; max-width:400px; text-align:center;">
+      <h3 style="margin-bottom:15px; color:#1f2937;">Scan Customer QR</h3>
+      <div id="reader" style="width:100%"></div>
+      <button class="btn-outline" onclick="closeQrScanner()" style="margin-top:15px; width:100%; justify-content:center;">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      collection, 
+      doc, 
+      getDoc, 
+      getDocs, 
+      query, 
+      where, 
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    let currentUser = null;
+    let currentUserData = null;
+    let map = null;
+    let userMarker = null;
+    let taskMarkers = [];
+    let routingControl = null;
+    let watchId = null;
+    let liveTracking = false;
+    let currentPosition = null;
+    let activeOrderId = new URLSearchParams(window.location.search).get('orderId');
+    let activeTaskLocation = null;
+    let html5QrcodeScanner = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'collector') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      currentUserData = userDoc.data();
+      
+      document.getElementById('userName').textContent = currentUserData.name || 'Collector';
+      document.getElementById('userEmail').textContent = user.email;
+      
+      // Set initial status
+      const isAvailable = currentUserData.isAvailable !== false;
+      document.getElementById('availabilityToggle').checked = isAvailable;
+      updateStatusDisplay(isAvailable);
+      
+      initMap();
+    });
+
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    function updateStatusDisplay(isAvailable) {
+      const badge = document.getElementById('statusBadge');
+      const text = document.getElementById('statusText');
+      if (isAvailable) {
+        badge.className = 'status-badge online';
+        text.textContent = 'Online';
+      } else {
+        badge.className = 'status-badge offline';
+        text.textContent = 'Offline';
+      }
+    }
+
+    window.toggleAvailability = async function() {
+      const toggle = document.getElementById('availabilityToggle');
+      const isAvailable = toggle.checked;
+      
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          isAvailable: isAvailable
+        });
+        updateStatusDisplay(isAvailable);
+      } catch (error) {
+        console.error('Error updating availability:', error);
+        toggle.checked = !isAvailable;
+      }
+    };
+
+    function initMap() {
+      // Default to Mumbai
+      const defaultLocation = [19.0760, 72.8777];
+      
+      map = L.map('map-container').setView(defaultLocation, 12);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Add search control
+      const geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+      }).on('markgeocode', function(e) {
+        const latlng = e.geocode.center;
+        map.setView(latlng, 15);
+        
+        // Add temporary marker for searched location
+        L.marker(latlng).addTo(map)
+          .bindPopup(e.geocode.name)
+          .openPopup();
+      }).addTo(map);
+
+      // Get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            currentPosition = [lat, lng];
+            map.setView([lat, lng], 14);
+            addUserMarker(lat, lng);
+            loadTasksWithCoordinates();
+          },
+          (error) => {
+            console.log('Using default location');
+            addUserMarker(defaultLocation[0], defaultLocation[1]);
+            loadTasksWithCoordinates();
+          }
+        );
+      } else {
+        addUserMarker(defaultLocation[0], defaultLocation[1]);
+        loadTasksWithCoordinates();
+      }
+    }
+
+    function addUserMarker(lat, lng) {
+      if (userMarker) {
+        userMarker.setLatLng([lat, lng]);
+      } else {
+        // Custom icon for user location
+        const userIcon = L.divIcon({
+          html: '<i class="fas fa-truck" style="color: #3b82f6; font-size: 24px;"></i>',
+          className: 'user-marker',
+          iconSize: [24, 24]
+        });
+        
+        userMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map)
+          .bindPopup('Your Location')
+          .openPopup();
+      }
+    }
+
+    window.getCurrentLocation = function() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            currentPosition = [lat, lng];
+            map.setView([lat, lng], 16);
+            addUserMarker(lat, lng);
+          },
+          (error) => {
+            alert('Error getting location: ' + error.message);
+          }
+        );
+      } else {
+        alert('Geolocation not supported');
+      }
+    };
+
+    window.searchLocation = function() {
+      const query = document.getElementById('searchInput').value;
+      if (!query) return;
+      
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 15);
+            
+            L.marker([lat, lng]).addTo(map)
+              .bindPopup(data[0].display_name)
+              .openPopup();
+          } else {
+            alert('Location not found');
+          }
+        })
+        .catch(error => {
+          console.error('Search error:', error);
+          alert('Error searching location');
+        });
+    };
+
+    async function loadTasksWithCoordinates() {
+      showLoading(true);
+      
+      try {
+        // Clear existing task markers
+        taskMarkers.forEach(m => map.removeLayer(m));
+        taskMarkers = [];
+        
+        // Get collector's tasks
+        const tasksQuery = query(
+          collection(db, "orders"),
+          where("collectorId", "==", currentUser.uid)
+        );
+        const tasksSnapshot = await getDocs(tasksQuery);
+        
+        let pending = 0;
+        let assigned = 0;
+        let inProgress = 0;
+        let taskLocations = [];
+        
+        tasksSnapshot.forEach(doc => {
+          const task = doc.data();
+          
+          // Count by status
+          if (task.status === 'pending') pending++;
+          else if (task.status === 'assigned') assigned++;
+          else if (task.status === 'in-progress') inProgress++;
+          
+          // Use coordinates from task if available, otherwise generate random near user
+          let lat, lng;
+          
+          if (task.latitude && task.longitude) {
+            lat = parseFloat(task.latitude);
+            lng = parseFloat(task.longitude);
+          } else if (currentPosition) {
+            // Generate random offset from current position
+            lat = currentPosition[0] + (Math.random() * 0.02 - 0.01);
+            lng = currentPosition[1] + (Math.random() * 0.02 - 0.01);
+          } else {
+            lat = 19.0760 + (Math.random() * 0.02 - 0.01);
+            lng = 72.8777 + (Math.random() * 0.02 - 0.01);
+          }
+          taskLocations.push([lat, lng]);
+          if (doc.id === activeOrderId) {
+            activeTaskLocation = [lat, lng];
+          }
+          
+          // Determine marker color based on status
+          let color = '#f59e0b'; // pending
+          if (task.status === 'assigned') color = '#8b5cf6';
+          else if (task.status === 'in-progress') color = '#10b981';
+          
+          // Create custom marker with icon
+          const taskIcon = L.divIcon({
+            html: `<div style="background: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>`,
+            className: 'task-marker',
+            iconSize: [20, 20]
+          });
+          
+          let markerHtml = `
+              <b>${task.customerName || 'Customer'}</b><br>
+              <i class="fas fa-trash"></i> ${task.wasteType || 'N/A'} - ${task.weight || 0}kg<br>
+              <i class="fas fa-clock"></i> ${task.preferredTime || 'N/A'}<br>
+              <span style="color: ${color}">${task.status}</span><br>
+              ${task.address ? task.address.substring(0, 50) + '...' : ''}
+            `;
+          if (doc.id === activeOrderId) {
+             markerHtml = `<div style="border:2px solid green; padding:5px;"><b>(ACTIVE)</b><br>` + markerHtml + `</div>`;
+             // Ensure "I am arrived" button is visible and active early for demo
+             document.getElementById('btnArrived').style.display = 'inline-flex';
+             document.getElementById('btnArrived').disabled = false;
+          }
+
+          const marker = L.marker([lat, lng], { icon: taskIcon }).addTo(map)
+            .bindPopup(markerHtml);
+          
+          if (doc.id === activeOrderId) {
+             marker.openPopup();
+          }
+
+          taskMarkers.push(marker);
+        });
+        
+        // Update stats
+        const totalStops = tasksSnapshot.size;
+        document.getElementById('routeStops').textContent = totalStops;
+        
+        // Calculate estimated distance (rough estimate)
+        const estimatedDistance = Math.round(totalStops * 2.5);
+        document.getElementById('routeDistance').textContent = estimatedDistance + ' km';
+        document.getElementById('routeTime').textContent = Math.round(totalStops * 15) + ' min';
+        
+        // Find next stop (first pending or assigned task)
+        const nextTask = tasksSnapshot.docs.find(doc => 
+          doc.data().status === 'assigned' || doc.data().status === 'pending'
+        );
+        if (nextTask) {
+          const task = nextTask.data();
+          document.getElementById('nextStop').textContent = task.customerName || 'Next Stop';
+        } else {
+          document.getElementById('nextStop').textContent = 'No pending stops';
+        }
+        
+        // Fit map to show all markers
+        if (taskLocations.length > 0 && currentPosition) {
+          const allPoints = [currentPosition, ...taskLocations];
+          const bounds = L.latLngBounds(allPoints);
+          map.fitBounds(bounds, { padding: [50, 50] });
+        }
+        
+      } catch (error) {
+        console.error('Error loading tasks:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    window.startLiveTracking = function() {
+      if (!navigator.geolocation) {
+        alert('Geolocation not supported');
+        return;
+      }
+      
+      liveTracking = true;
+      document.getElementById('liveIndicator').className = 'live-indicator active';
+      document.getElementById('liveStatus').textContent = 'Live Tracking Active';
+      
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          currentPosition = [lat, lng];
+          
+          addUserMarker(lat, lng);
+          map.panTo([lat, lng]);
+
+          if (activeOrderId && liveTracking) {
+             updateDoc(doc(db, "orders", activeOrderId), {
+               liveTracking: { lat: lat, lng: lng, timestamp: new Date().toISOString() }
+             }).catch(e => console.error(e));
+          }
+
+          if (activeTaskLocation) {
+             const dist = getDistance(lat, lng, activeTaskLocation[0], activeTaskLocation[1]);
+             if (dist <= 50) {
+                 document.getElementById('btnArrived').style.display = 'inline-flex';
+                 document.getElementById('btnArrived').disabled = false;
+             }
+          }
+          
+          // Update route if exists
+          if (routingControl) {
+            routingControl.spliceWaypoints(0, 1, L.latLng(lat, lng));
+          }
+        },
+        (error) => {
+          console.error('Tracking error:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000
+        }
+      );
+    };
+
+    window.stopLiveTracking = function() {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      
+      liveTracking = false;
+      document.getElementById('liveIndicator').className = 'live-indicator';
+      document.getElementById('liveStatus').textContent = 'Live Tracking Stopped';
+    };
+
+    window.optimizeRoute = function() {
+      if (!currentPosition || taskMarkers.length === 0) {
+        alert('No tasks to optimize');
+        return;
+      }
+      
+      // Remove existing routing control
+      if (routingControl) {
+        map.removeControl(routingControl);
+      }
+      
+      // Get task coordinates
+      const waypoints = [L.latLng(currentPosition[0], currentPosition[1])];
+      
+      taskMarkers.forEach(marker => {
+        const latlng = marker.getLatLng();
+        waypoints.push(L.latLng(latlng.lat, latlng.lng));
+      });
+      
+      // Create new route
+      routingControl = L.Routing.control({
+        waypoints: waypoints,
+        routeWhileDragging: false,
+        showAlternatives: true,
+        fitSelectedRoutes: true,
+        lineOptions: {
+          styles: [{ color: '#3b82f6', opacity: 0.7, weight: 4 }]
+        }
+      }).addTo(map);
+      
+      alert('Route optimized! Following optimal path.');
+    };
+
+    window.centerMap = function() {
+      if (currentPosition) {
+        map.setView(currentPosition, 15);
+      }
+    };
+
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      const mapContainer = document.getElementById('map-container');
+      const routeInfo = document.getElementById('routeInfo');
+      const legend = document.querySelector('.legend');
+      const controls = document.querySelector('.map-controls');
+      
+      if (show) {
+        spinner.classList.add('active');
+        mapContainer.style.display = 'none';
+        routeInfo.style.display = 'none';
+        legend.style.display = 'none';
+        controls.style.display = 'none';
+      } else {
+        spinner.classList.remove('active');
+        mapContainer.style.display = 'block';
+        routeInfo.style.display = 'grid';
+        legend.style.display = 'flex';
+        controls.style.display = 'flex';
+      }
+    }
+    
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const p1 = lat1 * Math.PI/180;
+      const p2 = lat2 * Math.PI/180;
+      const dp = (lat2-lat1) * Math.PI/180;
+      const dl = (lon2-lon1) * Math.PI/180;
+      const a = Math.sin(dp/2) * Math.sin(dp/2) +
+                Math.cos(p1) * Math.cos(p2) *
+                Math.sin(dl/2) * Math.sin(dl/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    window.markArrived = async function() {
+       if (!activeOrderId) return;
+       try {
+          await updateDoc(doc(db, "orders", activeOrderId), {
+             status: 'arrived',
+             arrivedAt: new Date().toISOString()
+          });
+          document.getElementById('btnArrived').style.display = 'none';
+          document.getElementById('btnScanQr').style.display = 'inline-flex';
+          
+          // Stop tracking 
+          stopLiveTracking();
+          
+          alert('Citizen notified of your arrival. Please scan QR code.');
+       } catch(e) {
+          console.error(e);
+       }
+    };
+
+    window.openQrScanner = function() {
+      document.getElementById('qrModal').style.display = 'flex';
+      html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: {width: 250, height: 250} });
+      html5QrcodeScanner.render(onScanSuccess, onScanError);
+    };
+
+    window.closeQrScanner = function() {
+      document.getElementById('qrModal').style.display = 'none';
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.clear();
+      }
+    };
+
+    async function onScanSuccess(decodedText, decodedResult) {
+      closeQrScanner();
+      alert('QR Code Validated!');
+      try {
+         await updateDoc(doc(db, "orders", activeOrderId), {
+            status: 'completed',
+            completedAt: new Date().toISOString()
+         });
+         alert('Pickup Completed!');
+         window.location.href = 'collector_tasks.html';
+      } catch(e) {
+         console.error('Error completing:', e);
+      }
+    }
+
+    function onScanError(errorMessage) {
+      // Background error scanning
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    });
+  </script>
+</body>
+</html>

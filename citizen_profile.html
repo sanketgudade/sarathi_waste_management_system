@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Sarathi Waste Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Same base styles as previous */
+    :root {
+      --citizen-primary: #2ecc71;
+      --citizen-secondary: #27ae60;
+      --citizen-accent: #f1c40f;
+      --citizen-gradient: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #2ecc71;
+      background: #e8f5e9;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: #e8f5e9;
+      border-left-color: #2ecc71;
+      color: #2ecc71;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: var(--citizen-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #1f2937;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: #fee2e2;
+      border: none;
+      color: #dc2626;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .header-left p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .header-right {
+      position: relative;
+    }
+
+    .notification-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      font-size: 20px;
+      color: #1f2937;
+      transition: all 0.3s ease;
+    }
+
+    .notification-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ef4444;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 20px;
+      min-width: 20px;
+    }
+
+    .notification-dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      width: 320px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .notification-dropdown.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    .notification-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      color: #1f2937;
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: #2ecc71;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 15px 20px;
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.3s ease;
+    }
+
+    .notification-item:hover {
+      background: #f9fafb;
+    }
+
+    .notification-item.unread {
+      background: #e8f5e9;
+    }
+
+    .notification-item i {
+      font-size: 18px;
+      color: #2ecc71;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-text {
+      color: #1f2937;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .notification-time {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Cover Photo */
+    .cover-photo {
+      height: 150px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+
+    /* Avatar */
+    .avatar-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-top: -60px;
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      color: #2ecc71;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 4px solid white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .edit-avatar {
+      position: absolute;
+      bottom: 10px;
+      right: calc(50% - 60px);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #2ecc71;
+      border: 3px solid white;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .edit-avatar:hover {
+      background: #27ae60;
+      transform: scale(1.1);
+    }
+
+    /* Profile Info */
+    .profile-info {
+      text-align: center;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      color: #1f2937;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .profile-email {
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .profile-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #fef9e7;
+      color: #f1c40f;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .profile-badge i {
+      margin-right: 5px;
+    }
+
+    .profile-join-date {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2ecc71;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Details Section */
+    .details-section {
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: #1f2937;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: #2ecc71;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .detail-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .detail-item:hover {
+      background: #e8f5e9;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      font-size: 16px;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    /* Edit Mode */
+    .edit-mode .detail-value {
+      display: none;
+    }
+
+    .edit-input {
+      display: none;
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #2ecc71;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .edit-mode .edit-input {
+      display: block;
+    }
+
+    .edit-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .edit-mode .edit-actions {
+      display: flex;
+    }
+
+    /* Achievements Section */
+    .achievements-section {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .achievement-card {
+      text-align: center;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .achievement-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: white;
+      font-size: 20px;
+    }
+
+    .achievement-icon.locked {
+      background: #d1d5db;
+    }
+
+    .achievement-name {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .achievement-desc {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .achievement-progress {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #2ecc71;
+      font-weight: 500;
+    }
+
+    /* Settings Section */
+    .settings-section {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .settings-item:hover {
+      background: #e8f5e9;
+    }
+
+    .settings-item-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .settings-item-left i {
+      width: 20px;
+      color: #2ecc71;
+    }
+
+    .settings-item-left span {
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .settings-item-right {
+      color: #6b7280;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #2ecc71;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+      padding: 20px;
+      border-top: 1px solid #fee2e2;
+    }
+
+    .danger-zone h3 {
+      color: #dc2626;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .danger-btn {
+      width: 100%;
+      padding: 12px;
+      background: #fee2e2;
+      border: 1px solid #dc2626;
+      color: #dc2626;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .danger-btn:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: var(--citizen-gradient);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2ecc71;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .top-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .edit-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-recycle"></i>
+          <span>Sarathi Citizen</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="citizen_dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="citizen_request_pickup.html" class="nav-link">
+            <i class="fas fa-calendar-plus"></i><span>Request Pickup</span></a></li>
+          <li><a href="citizen_track_collector.html" class="nav-link">
+            <i class="fas fa-map-marked-alt"></i><span>Track Collector</span></a></li>
+          <li><a href="citizen_my_requests.html" class="nav-link">
+            <i class="fas fa-list-alt"></i><span>My Requests</span></a></li>
+          <li><a href="citizen_scan_garbage.html" class="nav-link">
+            <i class="fas fa-camera"></i><span>Scan Garbage</span></a></li>
+          <li><a href="citizen_history.html" class="nav-link">
+            <i class="fas fa-history"></i><span>History</span></a></li>
+          <li><a href="citizen_complaints.html" class="nav-link">
+            <i class="fas fa-exclamation-circle"></i><span>Complaints</span></a></li>
+          <li><a href="citizen_profile.html" class="nav-link active">
+            <i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="user-email" id="userEmail">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-subtitle">Manage your account and preferences</p>
+        </div>
+        <div class="header-right">
+          <button class="notification-btn" onclick="toggleNotifications()">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationBadge">0</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h3>Notifications</h3>
+              <button class="mark-read-btn" onclick="markAllRead()">Mark all as read</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+              <div class="notification-item">
+                <i class="fas fa-spinner fa-pulse"></i>
+                <div class="notification-content">
+                  <p class="notification-text">Loading notifications...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner active">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: #6b7280;">Loading profile...</p>
+      </div>
+
+      <!-- Profile Card -->
+      <div id="profileCard" class="profile-card" style="display: none;">
+        <!-- Cover Photo -->
+        <div class="cover-photo"></div>
+
+        <!-- Avatar -->
+        <div class="avatar-container">
+          <div class="profile-avatar" id="profileAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="edit-avatar" onclick="changeAvatar()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+          <h2 class="profile-name" id="profileName">Loading...</h2>
+          <p class="profile-email" id="profileEmail">Loading...</p>
+          <span class="profile-badge" id="profileBadge">
+            <i class="fas fa-star"></i> Bronze Member
+          </span>
+          <div class="profile-join-date" id="joinDate">Member since Loading...</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="statCollections">0</div>
+            <div class="stat-label">Collections</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="statWeight">0 kg</div>
+            <div class="stat-label">Total Waste</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="statPoints">0</div>
+            <div class="stat-label">Green Points</div>
+          </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="details-section" id="detailsSection">
+          <h3 class="section-title">
+            <i class="fas fa-id-card"></i>
+            Personal Information
+            <button class="btn-secondary" onclick="toggleEdit()" style="margin-left: auto; padding: 6px 12px; font-size: 14px;" id="editBtn">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+          </h3>
+          
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Full Name</span>
+              <span class="detail-value" id="displayName">Loading...</span>
+              <input type="text" class="edit-input" id="editName" value="">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Phone Number</span>
+              <span class="detail-value" id="displayPhone">Loading...</span>
+              <input type="tel" class="edit-input" id="editPhone" value="" pattern="[0-9]{10}">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Email Address</span>
+              <span class="detail-value" id="displayEmail">Loading...</span>
+              <input type="email" class="edit-input" id="editEmail" value="" disabled>
+              <small style="color: #6b7280; font-size: 11px;">Email cannot be changed</small>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Address</span>
+              <span class="detail-value" id="displayAddress">Loading...</span>
+              <input type="text" class="edit-input" id="editAddress" value="">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">District</span>
+              <span class="detail-value" id="displayDistrict">Loading...</span>
+              <select class="edit-input" id="editDistrict">
+                <option value="">Select District</option>
+              </select>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Taluka</span>
+              <span class="detail-value" id="displayTaluka">Loading...</span>
+              <select class="edit-input" id="editTaluka">
+                <option value="">Select Taluka</option>
+              </select>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Pincode</span>
+              <span class="detail-value" id="displayPincode">Loading...</span>
+              <input type="text" class="edit-input" id="editPincode" value="" pattern="[0-9]{6}" maxlength="6">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Member Since</span>
+              <span class="detail-value" id="displayMemberSince">Loading...</span>
+            </div>
+          </div>
+
+          <!-- Edit Actions -->
+          <div class="edit-actions">
+            <button class="btn-primary" onclick="saveChanges()" style="flex: 1;">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button class="btn-secondary" onclick="cancelEdit()" style="flex: 1;">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="achievements-section">
+          <h3 class="section-title">
+            <i class="fas fa-trophy"></i>
+            Achievements
+          </h3>
+          
+          <div class="achievements-grid" id="achievementsGrid">
+            <!-- Achievements will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="settings-section">
+          <h3 class="section-title">
+            <i class="fas fa-cog"></i>
+            Settings & Preferences
+          </h3>
+          
+          <div class="settings-list">
+            <div class="settings-item" onclick="navigateTo('notifications')">
+              <div class="settings-item-left">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
+              </div>
+              <div class="settings-item-right">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="notificationToggle" checked onchange="toggleSetting('notifications')">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('email')">
+              <div class="settings-item-left">
+                <i class="fas fa-envelope"></i>
+                <span>Email Updates</span>
+              </div>
+              <div class="settings-item-right">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="emailToggle" checked onchange="toggleSetting('email')">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('sms')">
+              <div class="settings-item-left">
+                <i class="fas fa-sms"></i>
+                <span>SMS Alerts</span>
+              </div>
+              <div class="settings-item-right">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="smsToggle" checked onchange="toggleSetting('sms')">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('language')">
+              <div class="settings-item-left">
+                <i class="fas fa-language"></i>
+                <span>Language</span>
+              </div>
+              <div class="settings-item-right">
+                <span>English <i class="fas fa-chevron-right"></i></span>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('privacy')">
+              <div class="settings-item-left">
+                <i class="fas fa-lock"></i>
+                <span>Privacy & Security</span>
+              </div>
+              <div class="settings-item-right">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('help')">
+              <div class="settings-item-left">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+              </div>
+              <div class="settings-item-right">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('about')">
+              <div class="settings-item-left">
+                <i class="fas fa-info-circle"></i>
+                <span>About Sarathi</span>
+              </div>
+              <div class="settings-item-right">
+                <span>v1.0.0 <i class="fas fa-chevron-right"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+          <h3>
+            <i class="fas fa-exclamation-triangle"></i>
+            Danger Zone
+          </h3>
+          <button class="danger-btn" onclick="deactivateAccount()">
+            <i class="fas fa-user-slash"></i> Deactivate Account
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    // Import Firebase modules
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      collection, 
+      doc, 
+      getDoc, 
+      getDocs, 
+      updateDoc,
+      query, 
+      where, 
+      orderBy, 
+      limit,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Global variables
+    let currentUser = null;
+    let currentUserData = null;
+    let isEditMode = false;
+    let originalData = {};
+
+    // Maharashtra districts and talukas data
+    const maharashtraData = {
+  "Mumbai City": ["Mumbai City"],
+  "Mumbai Suburban": ["Andheri", "Bandra", "Borivali", "Kurla"],
+  "Thane": ["Thane", "Kalyan", "Ulhasnagar", "Bhiwandi", "Ambarnath", "Shahapur", "Murbad"],
+  "Palghar": ["Vasai", "Virar", "Dahanu", "Talasari", "Jawhar", "Mokhada"],
+  "Raigad": ["Alibag", "Panvel", "Pen", "Uran", "Karjat", "Khalapur", "Mahad", "Roha"],
+  "Pune": ["Haveli", "Mulshi", "Maval", "Baramati", "Indapur", "Junnar", "Ambegaon", "Khed", "Bhor", "Velhe", "Daund", "Purandar"],
+  "Nashik": ["Nashik", "Malegaon", "Igatpuri", "Sinnar", "Niphad", "Yeola", "Dindori", "Kalwan", "Baglan", "Chandwad", "Trimbakeshwar", "Peint", "Deola", "Surgana"],
+  "Ahmednagar": ["Ahmednagar", "Rahuri", "Shirdi", "Kopargaon", "Sangamner", "Shrirampur", "Pathardi", "Parner", "Shevgaon", "Karjat", "Jamkhed", "Nevasa", "Akole"],
+  "Solapur": ["Solapur North", "Solapur South", "Barshi", "Pandharpur", "Akkalkot", "Mangalwedha", "Sangole", "Malshiras", "Madha", "Karmala", "Mohol"],
+  "Satara": ["Satara", "Karad", "Wai", "Phaltan", "Mahabaleshwar", "Khandala", "Koregaon", "Patan", "Jaoli"],
+  "Sangli": ["Sangli", "Miraj", "Tasgaon", "Palus", "Kavathe Mahankal", "Jat", "Atpadi", "Walwa", "Shirala"],
+  "Kolhapur": ["Karveer", "Hatkanangale", "Shirol", "Gaganbawda", "Radhanagari", "Chandgad", "Ajra", "Bhudargad", "Kagal", "Panhala"],
+  "Ratnagiri": ["Ratnagiri", "Chiplun", "Guhagar", "Dapoli", "Lanja", "Rajapur", "Mandangad", "Khed"],
+  "Sindhudurg": ["Kudal", "Malvan", "Sawantwadi", "Vengurla", "Devgad", "Dodamarg", "Vaibhavwadi"],
+  "Chhatrapati Sambhajinagar": ["Aurangabad", "Kannad", "Sillod", "Vaijapur", "Phulambri", "Khuldabad", "Gangapur", "Paithan", "Soegaon"],
+  "Jalna": ["Jalna", "Ambad", "Bhokardan", "Badnapur", "Partur", "Mantha", "Ghansawangi", "Jafrabad"],
+  "Beed": ["Beed", "Georai", "Majalgaon", "Ambajogai", "Parli", "Ashti", "Patoda", "Kaij", "Dharur", "Wadwani", "Shirur"],
+  "Dharashiv": ["Dharashiv", "Tuljapur", "Bhoom", "Paranda", "Kalamb", "Lohara", "Umarga", "Washi"],
+  "Latur": ["Latur", "Ahmadpur", "Udgir", "Nilanga", "Ausa", "Chakur", "Deoni", "Renapur", "Shirur Anantpal"],
+  "Nanded": ["Nanded", "Kinwat", "Mudkhed", "Bhokar", "Deglur", "Mukhed", "Loha", "Naigaon", "Hadgaon", "Himayatnagar", "Ardhapur", "Mahur", "Biloli", "Kandhar"],
+  "Parbhani": ["Parbhani", "Gangakhed", "Purna", "Pathri", "Jintur", "Manwath", "Palam", "Sonpeth", "Selu"],
+  "Hingoli": ["Hingoli", "Kalamnuri", "Basmath", "Aundha", "Sengaon"],
+  "Akola": ["Akola", "Akot", "Balapur", "Murtijapur", "Telhara", "Patur"],
+  "Washim": ["Washim", "Malegaon", "Mangrulpir", "Risod", "Karanja"],
+  "Amravati": ["Amravati", "Chandur", "Dhamangaon", "Achalpur", "Morshi", "Warud", "Anjangaon", "Chikhaldara", "Nandgaon"],
+  "Yavatmal": ["Yavatmal", "Darwha", "Pusad", "Umarkhed", "Ghatanji", "Pandharkawada", "Kalamb", "Digras", "Wani", "Ralegaon", "Maregaon", "Mahagaon", "Arni", "Babulgaon"],
+  "Wardha": ["Wardha", "Hinganghat", "Arvi", "Deoli", "Seloo", "Samudrapur", "Karanja"],
+  "Nagpur": ["Nagpur", "Hingna", "Ramtek", "Umred", "Kamptee", "Kalmeshwar", "Katol", "Narkhed", "Parseoni", "Savner", "Bhiwapur", "Kuhi", "Mauda"],
+  "Bhandara": ["Bhandara", "Tumsar", "Pauni", "Sakoli", "Mohadi", "Lakhani"],
+  "Gondia": ["Gondia", "Tumsar", "Tirora", "Goregaon", "Amgaon", "Deori", "Sadak Arjuni", "Salekasa", "Arjuni Morgaon"],
+  "Chandrapur": ["Chandrapur", "Ballarpur", "Warora", "Brahmapuri", "Nagbhid", "Sindewahi", "Mul", "Rajura", "Korpana", "Gondpipri", "Pombhurna", "Chimur", "Bhadravati"],
+  "Gadchiroli": ["Gadchiroli", "Aheri", "Etapalli", "Chamorshi", "Dhanora", "Armori", "Kurkheda", "Korchi", "Bhamragad", "Sironcha", "Mulchera"]
+};
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Verify user is citizen
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'citizen') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      currentUserData = userDoc.data();
+      
+      // Update sidebar
+      document.getElementById('userName').textContent = currentUserData.name || 'Citizen User';
+      document.getElementById('userEmail').textContent = user.email;
+      
+      // Load districts
+      loadDistricts();
+      
+      // Load profile data
+      loadProfile();
+      
+      // Load achievements
+      loadAchievements();
+      
+      // Load notifications
+      loadNotifications();
+      
+      // Load settings
+      loadSettings();
+    });
+
+    // Logout function
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    // Toggle sidebar on mobile
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    // Toggle Notifications
+    window.toggleNotifications = function() {
+      const dropdown = document.getElementById('notificationDropdown');
+      dropdown.classList.toggle('show');
+    };
+
+    // Load Notifications
+    async function loadNotifications() {
+      try {
+        const notificationsQuery = query(
+          collection(db, "notifications"), 
+          where("userId", "==", currentUser.uid),
+          orderBy("createdAt", "desc"),
+          limit(5)
+        );
+        const notificationsSnapshot = await getDocs(notificationsQuery);
+        
+        const notificationList = document.getElementById('notificationList');
+        const badge = document.getElementById('notificationBadge');
+        
+        if (notificationsSnapshot.empty) {
+          notificationList.innerHTML = `
+            <div class="notification-item">
+              <i class="fas fa-bell-slash"></i>
+              <div class="notification-content">
+                <p class="notification-text">No notifications</p>
+              </div>
+            </div>
+          `;
+          badge.textContent = '0';
+          return;
+        }
+
+        let unreadCount = 0;
+        let html = '';
+        notificationsSnapshot.forEach(doc => {
+          const notif = doc.data();
+          const unreadClass = notif.read ? '' : 'unread';
+          if (!notif.read) unreadCount++;
+          
+          const date = notif.createdAt ? new Date(notif.createdAt.toDate()).toLocaleDateString() : 'N/A';
+          
+          html += `
+            <div class="notification-item ${unreadClass}" onclick="markNotificationRead('${doc.id}')">
+              <i class="fas ${notif.icon || 'fa-bell'}"></i>
+              <div class="notification-content">
+                <p class="notification-text">${notif.message}</p>
+                <span class="notification-time">${date}</span>
+              </div>
+            </div>
+          `;
+        });
+        notificationList.innerHTML = html;
+        badge.textContent = unreadCount;
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      }
+    }
+
+    // Mark notification as read
+    window.markNotificationRead = async function(notificationId) {
+      try {
+        await updateDoc(doc(db, "notifications", notificationId), {
+          read: true
+        });
+        loadNotifications();
+      } catch (error) {
+        console.error('Error marking notification read:', error);
+      }
+    };
+
+    // Mark all as read
+    window.markAllRead = async function() {
+      try {
+        const notificationsQuery = query(
+          collection(db, "notifications"), 
+          where("userId", "==", currentUser.uid),
+          where("read", "==", false)
+        );
+        const snapshot = await getDocs(notificationsQuery);
+        
+        const promises = [];
+        snapshot.forEach(doc => {
+          promises.push(updateDoc(doc.ref, { read: true }));
+        });
+        
+        await Promise.all(promises);
+        loadNotifications();
+      } catch (error) {
+        console.error('Error marking all read:', error);
+      }
+    };
+
+    // Load districts
+    function loadDistricts() {
+      const districtSelect = document.getElementById('editDistrict');
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      
+      const districts = Object.keys(maharashtraData).sort();
+      districts.forEach(district => {
+        const option = document.createElement('option');
+        option.value = district;
+        option.textContent = district;
+        districtSelect.appendChild(option);
+      });
+      
+      // Add change listener for taluka
+      districtSelect.addEventListener('change', loadTalukas);
+    }
+
+    // Load talukas
+    function loadTalukas() {
+      const district = document.getElementById('editDistrict').value;
+      const talukaSelect = document.getElementById('editTaluka');
+      
+      talukaSelect.innerHTML = '<option value="">Select Taluka</option>';
+      
+      if (district && maharashtraData[district]) {
+        maharashtraData[district].forEach(taluka => {
+          const option = document.createElement('option');
+          option.value = taluka;
+          option.textContent = taluka;
+          talukaSelect.appendChild(option);
+        });
+      }
+    }
+
+    // Load profile data
+    async function loadProfile() {
+      showLoading(true);
+      
+      try {
+        // Get user data
+        document.getElementById('profileName').textContent = currentUserData.name || 'Citizen User';
+        document.getElementById('profileEmail').textContent = currentUser.email;
+        
+        // Display values
+        document.getElementById('displayName').textContent = currentUserData.name || 'Not provided';
+        document.getElementById('displayPhone').textContent = currentUserData.phone || 'Not provided';
+        document.getElementById('displayEmail').textContent = currentUser.email;
+        document.getElementById('displayAddress').textContent = currentUserData.address || 'Not provided';
+        document.getElementById('displayDistrict').textContent = currentUserData.district || 'Not provided';
+        document.getElementById('displayTaluka').textContent = currentUserData.taluka || 'Not provided';
+        document.getElementById('displayPincode').textContent = currentUserData.pincode || 'Not provided';
+        
+        // Edit inputs
+        document.getElementById('editName').value = currentUserData.name || '';
+        document.getElementById('editPhone').value = currentUserData.phone || '';
+        document.getElementById('editEmail').value = currentUser.email;
+        document.getElementById('editAddress').value = currentUserData.address || '';
+        document.getElementById('editDistrict').value = currentUserData.district || '';
+        document.getElementById('editPincode').value = currentUserData.pincode || '';
+        
+        // Load talukas if district selected
+        if (currentUserData.district) {
+          loadTalukas();
+          setTimeout(() => {
+            document.getElementById('editTaluka').value = currentUserData.taluka || '';
+          }, 100);
+        }
+        
+        // Member since
+        const memberSince = currentUserData.createdAt ? 
+          new Date(currentUserData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 
+          'N/A';
+        document.getElementById('displayMemberSince').textContent = memberSince;
+        document.getElementById('joinDate').textContent = `Member since ${memberSince}`;
+        
+        // Get collections data
+        const ordersQuery = query(
+          collection(db, "orders"), 
+          where("userId", "==", currentUser.uid),
+          where("status", "==", "completed")
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
+        
+        let totalWeight = 0;
+        ordersSnapshot.forEach(doc => {
+          const order = doc.data();
+          totalWeight += parseFloat(order.weight) || 0;
+        });
+        
+        document.getElementById('statCollections').textContent = ordersSnapshot.size;
+        document.getElementById('statWeight').textContent = totalWeight.toFixed(1) + ' kg';
+        document.getElementById('statPoints').textContent = currentUserData.greenPoints || 0;
+        
+        // Set badge based on points
+        const points = currentUserData.greenPoints || 0;
+        let badge = 'Bronze Member';
+        let badgeIcon = 'fa-star';
+        if (points >= 1000) {
+          badge = 'Platinum Member';
+        } else if (points >= 500) {
+          badge = 'Gold Member';
+        } else if (points >= 200) {
+          badge = 'Silver Member';
+        }
+        document.getElementById('profileBadge').innerHTML = `<i class="fas ${badgeIcon}"></i> ${badge}`;
+        
+        // Hide loading, show profile
+        document.getElementById('loadingSpinner').classList.remove('active');
+        document.getElementById('profileCard').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showLoading(false);
+      }
+    }
+
+    // Load achievements
+    async function loadAchievements() {
+      const points = currentUserData.greenPoints || 0;
+      const collections = parseInt(document.getElementById('statCollections').textContent) || 0;
+      
+      const achievements = [
+        {
+          name: 'First Collection',
+          desc: 'Completed your first pickup',
+          icon: 'fa-truck',
+          achieved: collections >= 1,
+          progress: collections >= 1 ? 100 : 100
+        },
+        {
+          name: 'Eco Warrior',
+          desc: '50+ collections',
+          icon: 'fa-seedling',
+          achieved: collections >= 50,
+          progress: Math.min(100, (collections / 50) * 100)
+        },
+        {
+          name: 'Recycling Pro',
+          desc: '100kg waste recycled',
+          icon: 'fa-recycle',
+          achieved: points >= 1000,
+          progress: Math.min(100, (points / 1000) * 100)
+        },
+        {
+          name: 'Green Champion',
+          desc: '500 green points',
+          icon: 'fa-tree',
+          achieved: points >= 500,
+          progress: Math.min(100, (points / 500) * 100)
+        },
+        {
+          name: 'Earth Saver',
+          desc: '1 year active',
+          icon: 'fa-earth-asia',
+          achieved: false,
+          progress: 0
+        },
+        {
+          name: 'Community Hero',
+          desc: 'Refer 5 friends',
+          icon: 'fa-users',
+          achieved: false,
+          progress: 0
+        }
+      ];
+      
+      const grid = document.getElementById('achievementsGrid');
+      let html = '';
+      
+      achievements.forEach(ach => {
+        html += `
+          <div class="achievement-card">
+            <div class="achievement-icon ${ach.achieved ? '' : 'locked'}">
+              <i class="fas ${ach.icon}"></i>
+            </div>
+            <div class="achievement-name">${ach.name}</div>
+            <div class="achievement-desc">${ach.desc}</div>
+            ${!ach.achieved ? `<div class="achievement-progress">${Math.round(ach.progress)}% complete</div>` : ''}
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    }
+
+    // Load settings
+    function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem('userSettings')) || {
+        notifications: true,
+        email: true,
+        sms: true
+      };
+      
+      document.getElementById('notificationToggle').checked = settings.notifications;
+      document.getElementById('emailToggle').checked = settings.email;
+      document.getElementById('smsToggle').checked = settings.sms;
+    }
+
+    // Toggle edit mode
+    window.toggleEdit = function() {
+      const profileCard = document.getElementById('profileCard');
+      const editBtn = document.getElementById('editBtn');
+      
+      if (!isEditMode) {
+        // Enter edit mode
+        profileCard.classList.add('edit-mode');
+        editBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+        
+        // Store original values
+        originalData = {
+          name: document.getElementById('displayName').textContent,
+          phone: document.getElementById('displayPhone').textContent,
+          address: document.getElementById('displayAddress').textContent,
+          district: document.getElementById('displayDistrict').textContent,
+          taluka: document.getElementById('displayTaluka').textContent,
+          pincode: document.getElementById('displayPincode').textContent
+        };
+      } else {
+        // Exit edit mode without saving
+        profileCard.classList.remove('edit-mode');
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+      }
+      
+      isEditMode = !isEditMode;
+    };
+
+    // Cancel edit
+    window.cancelEdit = function() {
+      toggleEdit();
+    };
+
+    // Save changes
+    window.saveChanges = async function() {
+      const newName = document.getElementById('editName').value;
+      const newPhone = document.getElementById('editPhone').value;
+      const newAddress = document.getElementById('editAddress').value;
+      const newDistrict = document.getElementById('editDistrict').value;
+      const newTaluka = document.getElementById('editTaluka').value;
+      const newPincode = document.getElementById('editPincode').value;
+      
+      // Validate phone
+      if (newPhone && !/^[0-9]{10}$/.test(newPhone)) {
+        alert('Please enter a valid 10-digit phone number');
+        return;
+      }
+      
+      // Validate pincode
+      if (newPincode && !/^[0-9]{6}$/.test(newPincode)) {
+        alert('Please enter a valid 6-digit pincode');
+        return;
+      }
+      
+      showLoading(true);
+      
+      try {
+        // Update Firestore
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          name: newName || null,
+          phone: newPhone || null,
+          address: newAddress || null,
+          district: newDistrict || null,
+          taluka: newTaluka || null,
+          pincode: newPincode || null,
+          updatedAt: serverTimestamp()
+        });
+        
+        // Update local data
+        currentUserData = {
+          ...currentUserData,
+          name: newName,
+          phone: newPhone,
+          address: newAddress,
+          district: newDistrict,
+          taluka: newTaluka,
+          pincode: newPincode
+        };
+        
+        // Update display values
+        document.getElementById('displayName').textContent = newName || 'Not provided';
+        document.getElementById('displayPhone').textContent = newPhone || 'Not provided';
+        document.getElementById('displayAddress').textContent = newAddress || 'Not provided';
+        document.getElementById('displayDistrict').textContent = newDistrict || 'Not provided';
+        document.getElementById('displayTaluka').textContent = newTaluka || 'Not provided';
+        document.getElementById('displayPincode').textContent = newPincode || 'Not provided';
+        
+        // Update sidebar
+        document.getElementById('userName').textContent = newName || 'Citizen User';
+        
+        // Exit edit mode
+        toggleEdit();
+        
+        showLoading(false);
+        alert('Profile updated successfully!');
+        
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile: ' + error.message);
+        showLoading(false);
+      }
+    };
+
+    // Change avatar
+    window.changeAvatar = function() {
+      alert('Avatar change feature coming soon!');
+    };
+
+    // Toggle settings
+    window.toggleSetting = function(setting) {
+      const settings = JSON.parse(localStorage.getItem('userSettings')) || {
+        notifications: true,
+        email: true,
+        sms: true
+      };
+      
+      settings[setting] = !settings[setting];
+      localStorage.setItem('userSettings', JSON.stringify(settings));
+    };
+
+    // Navigate to settings pages
+    window.navigateTo = function(page) {
+      alert(`Navigating to ${page} settings`);
+    };
+
+    // Deactivate account
+    window.deactivateAccount = function() {
+      if (confirm('Are you sure you want to deactivate your account? This action cannot be undone.')) {
+        if (confirm('All your data will be permanently deleted. Continue?')) {
+          alert('Account deactivation feature coming soon!');
+        }
+      }
+    };
+
+    // Helper Functions
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      if (show) {
+        spinner.classList.add('active');
+        document.getElementById('profileCard').style.display = 'none';
+      } else {
+        spinner.classList.remove('active');
+        document.getElementById('profileCard').style.display = 'block';
+      }
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Close notifications when clicking outside
+      document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('notificationDropdown');
+        const btn = document.querySelector('.notification-btn');
+        if (!btn?.contains(event.target) && !dropdown?.contains(event.target)) {
+          dropdown?.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

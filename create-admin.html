@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin User - Sarathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+            background: #f8fafc;
+            color: #1f2937;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+        }
+        h1 {
+            color: #7c3aed;
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        p.subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #6d28d9;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+        }
+        #status.success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            display: block;
+        }
+        #status.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sarathi Admin Setup</h1>
+    <p class="subtitle">Initialize Root Municipal Administrator Account</p>
+
+    <form id="adminForm" onsubmit="createAdminUser(event)">
+        <div class="form-group">
+            <label for="adminName">Admin Full Name</label>
+            <input type="text" id="adminName" required placeholder="e.g. Municipal Ward Officer">
+        </div>
+        <div class="form-group">
+            <label for="adminEmail">Admin Email</label>
+            <input type="email" id="adminEmail" required placeholder="e.g. admin@sarathi.gov.in">
+        </div>
+        <div class="form-group">
+            <label for="adminPhone">Phone Number</label>
+            <input type="tel" id="adminPhone" required placeholder="+91 98765 43210">
+        </div>
+        <div class="form-group">
+            <label for="adminPassword">Admin Password</label>
+            <input type="password" id="adminPassword" minlength="8" required placeholder="Min 8 characters">
+        </div>
+        <button type="submit" id="submitBtn">Create Admin Account</button>
+    </form>
+
+    <div id="status"></div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        window.createAdminUser = async function(event) {
+            event.preventDefault();
+            const statusDiv = document.getElementById('status');
+            const submitBtn = document.getElementById('submitBtn');
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const phone = document.getElementById('adminPhone').value;
+            const password = document.getElementById('adminPassword').value;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating Account...';
+
+            try {
+                // 1. Create in Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // 2. Add to Firestore with Admin Privilege
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    userType: "admin",
+                    name: name,
+                    phone: phone,
+                    isActive: true,
+                    createdAt: serverTimestamp()
+                });
+
+                statusDiv.className = 'success';
+                statusDiv.innerHTML = `
+                    <strong>Success!</strong> Admin account initialized.<br>
+                    <strong>Email:</strong> ${email}<br>
+                    <a href="admin_dashboard.html" style="display:inline-block; margin-top:10px; color:#15803d; font-weight:600;">Go to Admin Dashboard &rarr;</a>
+                `;
+            } catch (error) {
+                console.error("Error creating admin:", error);
+                statusDiv.className = 'error';
+                statusDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Admin Account';
+            }
+        };
+    </script>
+</body>
+</html>

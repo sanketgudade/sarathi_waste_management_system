@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - Sarathi Waste Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --collector-primary: #3b82f6;
+      --collector-secondary: #2563eb;
+      --collector-accent: #60a5fa;
+      --collector-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: var(--collector-gradient);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #60a5fa;
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-left-color: #60a5fa;
+      color: white;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .page-title h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .btn-edit {
+      background: #f3f4f6;
+      color: #1f2937;
+      border: 1px solid #e5e7eb;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-edit:hover {
+      background: #e5e7eb;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    /* Cover Photo */
+    .cover-photo {
+      height: 150px;
+      background: var(--collector-gradient);
+      position: relative;
+    }
+
+    /* Avatar */
+    .avatar-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-top: -60px;
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      color: #3b82f6;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 4px solid white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .edit-avatar {
+      position: absolute;
+      bottom: 10px;
+      right: calc(50% - 60px);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #3b82f6;
+      border: 3px solid white;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .edit-avatar:hover {
+      background: #2563eb;
+      transform: scale(1.1);
+    }
+
+    /* Profile Info */
+    .profile-info {
+      text-align: center;
+      padding: 0 20px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      color: #1f2937;
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+
+    .profile-email {
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .profile-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #dbeafe;
+      color: #2563eb;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+
+    .profile-join-date {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    /* Details Section */
+    .details-section {
+      padding: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: #1f2937;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title i {
+      color: #3b82f6;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .detail-item {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .detail-item:hover {
+      background: #dbeafe;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      font-size: 16px;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    /* Edit Mode */
+    .edit-mode .detail-value {
+      display: none;
+    }
+
+    .edit-input {
+      display: none;
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #3b82f6;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .edit-mode .edit-input {
+      display: block;
+    }
+
+    .edit-actions {
+      display: none;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .edit-mode .edit-actions {
+      display: flex;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #1f2937;
+      border: 1px solid #e5e7eb;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    /* Achievements Section */
+    .achievements-section {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .achievement-card {
+      text-align: center;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .achievement-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--collector-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: white;
+      font-size: 20px;
+    }
+
+    .achievement-icon.locked {
+      background: #d1d5db;
+    }
+
+    .achievement-name {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .achievement-desc {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .achievement-progress {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+
+    /* Settings Section */
+    .settings-section {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .settings-item:hover {
+      background: #dbeafe;
+    }
+
+    .settings-item-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .settings-item-left i {
+      width: 20px;
+      color: #3b82f6;
+    }
+
+    .settings-item-left span {
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .settings-item-right {
+      color: #6b7280;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #3b82f6;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .edit-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-truck"></i>
+          <span>Sarathi Collector</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="collector_dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="collector_tasks.html" class="nav-link">
+            <i class="fas fa-tasks"></i><span>My Tasks</span></a></li>
+          <li><a href="collector_scanner.html" class="nav-link">
+            <i class="fas fa-qrcode"></i><span>QR Scanner</span></a></li>
+          <li><a href="collector_route.html" class="nav-link">
+            <i class="fas fa-map-marked-alt"></i><span>Route Map</span></a></li>
+          <li><a href="collector_history.html" class="nav-link">
+            <i class="fas fa-history"></i><span>History</span></a></li>
+          <li><a href="collector_profile.html" class="nav-link active">
+            <i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="user-email" id="userEmail">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>My Profile</h1>
+          <p>Manage your account and preferences</p>
+        </div>
+        <button class="btn-edit" onclick="toggleEdit()" id="editBtn">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+      </header>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner active">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: #6b7280;">Loading profile...</p>
+      </div>
+
+      <!-- Profile Card -->
+      <div id="profileCard" class="profile-card" style="display: none;">
+        <!-- Cover Photo -->
+        <div class="cover-photo"></div>
+
+        <!-- Avatar -->
+        <div class="avatar-container">
+          <div class="profile-avatar" id="profileAvatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="edit-avatar" onclick="changeAvatar()">
+            <i class="fas fa-camera"></i>
+          </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+          <h2 class="profile-name" id="profileName">Loading...</h2>
+          <p class="profile-email" id="profileEmail">Loading...</p>
+          <span class="profile-badge" id="profileBadge">
+            <i class="fas fa-star"></i> Active Collector
+          </span>
+          <div class="profile-join-date" id="joinDate">Member since Loading...</div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="statPickups">0</div>
+            <div class="stat-label">Pickups</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="statWeight">0 kg</div>
+            <div class="stat-label">Waste</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="statRating">5.0</div>
+            <div class="stat-label">Rating</div>
+          </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="details-section" id="detailsSection">
+          <h3 class="section-title">
+            <i class="fas fa-id-card"></i>
+            Personal Information
+          </h3>
+          
+          <div class="details-grid">
+            <div class="detail-item">
+              <span class="detail-label">Full Name</span>
+              <span class="detail-value" id="displayName">Loading...</span>
+              <input type="text" class="edit-input" id="editName" value="">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Employee ID</span>
+              <span class="detail-value" id="displayEmpId">Loading...</span>
+              <input type="text" class="edit-input" id="editEmpId" value="" readonly>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Email</span>
+              <span class="detail-value" id="displayEmail">Loading...</span>
+              <input type="email" class="edit-input" id="editEmail" value="" readonly>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Phone</span>
+              <span class="detail-value" id="displayPhone">Loading...</span>
+              <input type="tel" class="edit-input" id="editPhone" value="">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Assigned Zone</span>
+              <span class="detail-value" id="displayZone">Loading...</span>
+              <input type="text" class="edit-input" id="editZone" value="">
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-label">Vehicle Number</span>
+              <span class="detail-value" id="displayVehicle">Loading...</span>
+              <input type="text" class="edit-input" id="editVehicle" value="">
+            </div>
+          </div>
+
+          <!-- Edit Actions -->
+          <div class="edit-actions">
+            <button class="btn-primary" onclick="saveChanges()">
+              <i class="fas fa-save"></i> Save Changes
+            </button>
+            <button class="btn-secondary" onclick="cancelEdit()">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Achievements Section -->
+        <div class="achievements-section">
+          <h3 class="section-title">
+            <i class="fas fa-trophy"></i>
+            Achievements
+          </h3>
+          
+          <div class="achievements-grid" id="achievementsGrid">
+            <!-- Achievements will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="settings-section">
+          <h3 class="section-title">
+            <i class="fas fa-cog"></i>
+            Settings
+          </h3>
+          
+          <div class="settings-list">
+            <div class="settings-item" onclick="navigateTo('notifications')">
+              <div class="settings-item-left">
+                <i class="fas fa-bell"></i>
+                <span>Push Notifications</span>
+              </div>
+              <div class="settings-item-right">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="notificationToggle" checked onchange="toggleSetting('notifications')">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('language')">
+              <div class="settings-item-left">
+                <i class="fas fa-language"></i>
+                <span>Language</span>
+              </div>
+              <div class="settings-item-right">
+                <span>English <i class="fas fa-chevron-right"></i></span>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('privacy')">
+              <div class="settings-item-left">
+                <i class="fas fa-lock"></i>
+                <span>Privacy & Security</span>
+              </div>
+              <div class="settings-item-right">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+            
+            <div class="settings-item" onclick="navigateTo('help')">
+              <div class="settings-item-left">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+              </div>
+              <div class="settings-item-right">
+                <i class="fas fa-chevron-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      collection, 
+      doc, 
+      getDoc, 
+      getDocs, 
+      query, 
+      where, 
+      updateDoc,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    let currentUser = null;
+    let currentUserData = null;
+    let isEditMode = false;
+    let originalData = {};
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'collector') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      currentUserData = userDoc.data();
+      
+      document.getElementById('userName').textContent = currentUserData.name || 'Collector';
+      document.getElementById('userEmail').textContent = user.email;
+      
+      loadProfile();
+      loadAchievements();
+      loadSettings();
+    });
+
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    async function loadProfile() {
+      showLoading(true);
+      
+      try {
+        const empId = currentUserData.employeeId || 'COL' + currentUser.uid.slice(0, 5).toUpperCase();
+        
+        document.getElementById('profileName').textContent = currentUserData.name || 'Collector';
+        document.getElementById('profileEmail').textContent = currentUser.email;
+        
+        document.getElementById('displayName').textContent = currentUserData.name || 'Not provided';
+        document.getElementById('displayEmpId').textContent = empId;
+        document.getElementById('displayEmail').textContent = currentUser.email;
+        document.getElementById('displayPhone').textContent = currentUserData.phone || 'Not provided';
+        document.getElementById('displayZone').textContent = currentUserData.assignedZone || currentUserData.assignedArea || 'North Zone';
+        document.getElementById('displayVehicle').textContent = currentUserData.vehicleNumber || 'Not assigned';
+        
+        document.getElementById('editName').value = currentUserData.name || '';
+        document.getElementById('editEmpId').value = empId;
+        document.getElementById('editEmail').value = currentUser.email;
+        document.getElementById('editPhone').value = currentUserData.phone || '';
+        document.getElementById('editZone').value = currentUserData.assignedZone || currentUserData.assignedArea || 'North Zone';
+        document.getElementById('editVehicle').value = currentUserData.vehicleNumber || '';
+        
+        const memberSince = currentUserData.createdAt ? 
+          new Date(currentUserData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 
+          'N/A';
+        document.getElementById('joinDate').textContent = `Member since ${memberSince}`;
+        
+        const ordersQuery = query(
+          collection(db, "orders"), 
+          where("collectorId", "==", currentUser.uid),
+          where("status", "==", "completed")
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
+        
+        let totalWeight = 0;
+        ordersSnapshot.forEach(doc => {
+          const order = doc.data();
+          totalWeight += parseFloat(order.weight) || 0;
+        });
+        
+        document.getElementById('statPickups').textContent = ordersSnapshot.size;
+        document.getElementById('statWeight').textContent = totalWeight.toFixed(1) + ' kg';
+        
+        document.getElementById('loadingSpinner').classList.remove('active');
+        document.getElementById('profileCard').style.display = 'block';
+        
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        showLoading(false);
+      }
+    }
+
+    function loadAchievements() {
+      const pickups = parseInt(document.getElementById('statPickups').textContent) || 0;
+      const waste = parseFloat(document.getElementById('statWeight').textContent) || 0;
+      
+      const achievements = [
+        {
+          name: 'First Collection',
+          desc: 'Completed first pickup',
+          icon: 'fa-truck',
+          achieved: pickups >= 1,
+          progress: pickups >= 1 ? 100 : 100
+        },
+        {
+          name: '10 Collections',
+          desc: 'Completed 10 pickups',
+          icon: 'fa-star',
+          achieved: pickups >= 10,
+          progress: Math.min(100, (pickups / 10) * 100)
+        },
+        {
+          name: '50 Collections',
+          desc: 'Completed 50 pickups',
+          icon: 'fa-medal',
+          achieved: pickups >= 50,
+          progress: Math.min(100, (pickups / 50) * 100)
+        },
+        {
+          name: '100kg Waste',
+          desc: 'Collected 100kg waste',
+          icon: 'fa-weight',
+          achieved: waste >= 100,
+          progress: Math.min(100, (waste / 100) * 100)
+        }
+      ];
+      
+      const grid = document.getElementById('achievementsGrid');
+      let html = '';
+      
+      achievements.forEach(ach => {
+        html += `
+          <div class="achievement-card">
+            <div class="achievement-icon ${ach.achieved ? '' : 'locked'}">
+              <i class="fas ${ach.icon}"></i>
+            </div>
+            <div class="achievement-name">${ach.name}</div>
+            <div class="achievement-desc">${ach.desc}</div>
+            ${!ach.achieved ? `<div class="achievement-progress">${Math.round(ach.progress)}% complete</div>` : ''}
+          </div>
+        `;
+      });
+      
+      grid.innerHTML = html;
+    }
+
+    function loadSettings() {
+      const settings = JSON.parse(localStorage.getItem('collectorSettings')) || {
+        notifications: true
+      };
+      document.getElementById('notificationToggle').checked = settings.notifications;
+    }
+
+    window.toggleEdit = function() {
+      const profileCard = document.getElementById('profileCard');
+      const editBtn = document.getElementById('editBtn');
+      
+      if (!isEditMode) {
+        profileCard.classList.add('edit-mode');
+        editBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+        
+        originalData = {
+          name: document.getElementById('displayName').textContent,
+          phone: document.getElementById('displayPhone').textContent,
+          zone: document.getElementById('displayZone').textContent,
+          vehicle: document.getElementById('displayVehicle').textContent
+        };
+      } else {
+        profileCard.classList.remove('edit-mode');
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
+      }
+      
+      isEditMode = !isEditMode;
+    };
+
+    window.cancelEdit = function() {
+      toggleEdit();
+    };
+
+    window.saveChanges = async function() {
+      const newName = document.getElementById('editName').value;
+      const newPhone = document.getElementById('editPhone').value;
+      const newZone = document.getElementById('editZone').value;
+      const newVehicle = document.getElementById('editVehicle').value;
+      
+      if (newPhone && !/^[0-9]{10}$/.test(newPhone)) {
+        alert('Please enter a valid 10-digit phone number');
+        return;
+      }
+      
+      showLoading(true);
+      
+      try {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          name: newName || null,
+          phone: newPhone || null,
+          assignedZone: newZone || null,
+          vehicleNumber: newVehicle || null,
+          updatedAt: serverTimestamp()
+        });
+        
+        currentUserData = {
+          ...currentUserData,
+          name: newName,
+          phone: newPhone,
+          assignedZone: newZone,
+          vehicleNumber: newVehicle
+        };
+        
+        document.getElementById('displayName').textContent = newName || 'Not provided';
+        document.getElementById('displayPhone').textContent = newPhone || 'Not provided';
+        document.getElementById('displayZone').textContent = newZone || 'North Zone';
+        document.getElementById('displayVehicle').textContent = newVehicle || 'Not assigned';
+        document.getElementById('userName').textContent = newName || 'Collector';
+        document.getElementById('profileName').textContent = newName || 'Collector';
+        
+        toggleEdit();
+        showLoading(false);
+        alert('Profile updated successfully!');
+        
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile: ' + error.message);
+        showLoading(false);
+      }
+    };
+
+    window.changeAvatar = function() {
+      alert('Avatar change feature coming soon!');
+    };
+
+    window.toggleSetting = function(setting) {
+      const settings = JSON.parse(localStorage.getItem('collectorSettings')) || {
+        notifications: true
+      };
+      settings[setting] = !settings[setting];
+      localStorage.setItem('collectorSettings', JSON.stringify(settings));
+    };
+
+    window.navigateTo = function(page) {
+      alert(`Navigating to ${page} settings`);
+    };
+
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      const card = document.getElementById('profileCard');
+      if (show) {
+        spinner.classList.add('active');
+        card.style.display = 'none';
+      } else {
+        spinner.classList.remove('active');
+        card.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

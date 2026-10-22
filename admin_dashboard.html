@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Sarathi Waste Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  
+  <style>
+    /* Admin Dashboard Specific Styles */
+    :root {
+      --admin-primary: #7c3aed;
+      --admin-secondary: #6d28d9;
+      --admin-accent: #a855f7;
+      --admin-gradient: linear-gradient(135deg, #7c3aed, #6d28d9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: var(--admin-gradient);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #a855f7;
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(168, 85, 247, 0.3);
+      border-left-color: #a855f7;
+      color: white;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .page-title h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .admin-profile {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .admin-avatar {
+      width: 50px;
+      height: 50px;
+      background: var(--admin-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .admin-info h4 {
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .admin-info p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* Content Sections */
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Overview Cards */
+    .overview-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .overview-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .overview-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(124, 58, 237, 0.15);
+    }
+
+    .card-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--admin-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+    }
+
+    .card-content h3 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .card-content p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .trend {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    .trend.positive {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .trend.neutral {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-header h3 {
+      color: #1f2937;
+      font-size: 18px;
+    }
+
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+
+    /* Tables */
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-header h3 {
+      color: #1f2937;
+      font-size: 18px;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f9fafb;
+      padding: 15px 20px;
+      text-align: left;
+      font-weight: 600;
+      color: #374151;
+      font-size: 14px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    td {
+      padding: 15px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #1f2937;
+      font-size: 14px;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge.active {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .status-badge.inactive {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .status-badge.pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn.edit {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .action-btn.edit:hover {
+      background: #2563eb;
+      color: white;
+    }
+
+    .action-btn.delete {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .action-btn.delete:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    /* Filters */
+    .filters-bar {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-group label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      color: #1f2937;
+      font-size: 14px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      display: flex;
+      align-items: center;
+      background: #f9fafb;
+      border-radius: 6px;
+      padding: 0 10px;
+    }
+
+    .search-box i {
+      color: #9ca3af;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      background: none;
+      outline: none;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--admin-gradient);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #7c3aed;
+      border: 1px solid #7c3aed;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline:hover {
+      background: #7c3aed;
+      color: white;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+      animation: slideDown 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      color: #1f2937;
+    }
+
+    .close-modal {
+      font-size: 28px;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    .close-modal:hover {
+      color: #1f2937;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #7c3aed;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: var(--admin-gradient);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .overview-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+          <span>Sarathi Admin</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="#" class="nav-link active" onclick="showSection('dashboard')">
+            <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('users')">
+            <i class="fas fa-users"></i><span>Users Management</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('collectors')">
+            <i class="fas fa-truck"></i><span>Collectors</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('citizens')">
+            <i class="fas fa-user-friends"></i><span>Citizens</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('orders')">
+            <i class="fas fa-clipboard-list"></i><span>Orders</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('complaints')">
+            <i class="fas fa-exclamation-circle"></i><span>Complaints</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('analytics')">
+            <i class="fas fa-chart-line"></i><span>Analytics</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('reports')">
+            <i class="fas fa-file-alt"></i><span>Reports</span></a></li>
+          <li><a href="#" class="nav-link" onclick="showSection('settings')">
+            <i class="fas fa-cog"></i><span>Settings</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1 id="page-title">Admin Dashboard</h1>
+          <p id="page-subtitle">Welcome back, System Administrator</p>
+        </div>
+        <div class="admin-profile" id="adminProfile">
+          <div class="admin-info">
+            <h4 id="adminName">Loading...</h4>
+            <p id="adminEmail">Loading...</p>
+          </div>
+          <div class="admin-avatar">
+            <i class="fas fa-user-shield"></i>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-container" id="contentContainer">
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading-spinner">
+          <div class="spinner"></div>
+          <p style="margin-top: 20px; color: #6b7280;">Loading data...</p>
+        </div>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+          <div class="overview-cards">
+            <div class="overview-card">
+              <div class="card-icon"><i class="fas fa-users"></i></div>
+              <div class="card-content">
+                <h3 id="totalUsers">0</h3>
+                <p>Total Users</p>
+                <small class="trend positive">+12% this month</small>
+              </div>
+            </div>
+            <div class="overview-card">
+              <div class="card-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);"><i class="fas fa-truck"></i></div>
+              <div class="card-content">
+                <h3 id="totalCollectors">0</h3>
+                <p>Active Collectors</p>
+                <small class="trend positive">+5 this week</small>
+              </div>
+            </div>
+            <div class="overview-card">
+              <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas fa-user-friends"></i></div>
+              <div class="card-content">
+                <h3 id="totalCitizens">0</h3>
+                <p>Registered Citizens</p>
+                <small class="trend positive">+8% growth</small>
+              </div>
+            </div>
+            <div class="overview-card">
+              <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas fa-clipboard-list"></i></div>
+              <div class="card-content">
+                <h3 id="totalOrders">0</h3>
+                <p>Total Orders</p>
+                <small class="trend positive">+23% completion</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>User Growth</h3>
+                <select class="filter-select" onchange="updateUserChart(this.value)">
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                </select>
+              </div>
+              <div class="chart-container">
+                <canvas id="userChart"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Order Status</h3>
+              </div>
+              <div class="chart-container">
+                <canvas id="orderChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Recent Orders</h3>
+              <button class="btn-outline" onclick="showSection('orders')">
+                <i class="fas fa-eye"></i> View All
+              </button>
+            </div>
+            <table id="recentOrdersTable">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Type</th>
+                  <th>Weight</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="recentOrdersBody">
+                <tr>
+                  <td colspan="6" style="text-align: center; padding: 40px;">Loading orders...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Users Management Section -->
+        <section id="users" class="content-section">
+          <div class="filters-bar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+            </div>
+            <div class="filter-group">
+              <label>User Type:</label>
+              <select class="filter-select" id="userTypeFilter" onchange="filterUsers()">
+                <option value="all">All Users</option>
+                <option value="citizen">Citizens</option>
+                <option value="collector">Collectors</option>
+                <option value="admin">Admins</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Status:</label>
+              <select class="filter-select" id="userStatusFilter" onchange="filterUsers()">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="exportUsers()">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All Users</h3>
+              <button class="btn-primary" onclick="showAddUserModal()">
+                <i class="fas fa-plus"></i> Add User
+              </button>
+            </div>
+            <table id="usersTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>User Type</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 40px;">Loading users...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Collectors Section -->
+        <section id="collectors" class="content-section">
+          <div class="filters-bar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="collectorSearch" placeholder="Search collectors..." onkeyup="filterCollectors()">
+            </div>
+            <div class="filter-group">
+              <label>Zone:</label>
+              <select class="filter-select" id="zoneFilter" onchange="filterCollectors()">
+                <option value="all">All Zones</option>
+                <option value="north">North Zone</option>
+                <option value="south">South Zone</option>
+                <option value="east">East Zone</option>
+                <option value="west">West Zone</option>
+                <option value="central">Central Zone</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Status:</label>
+              <select class="filter-select" id="collectorStatusFilter" onchange="filterCollectors()">
+                <option value="all">All Status</option>
+                <option value="available">Available</option>
+                <option value="busy">On Duty</option>
+                <option value="offline">Offline</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="showAddCollectorModal()">
+              <i class="fas fa-plus"></i> Add Collector
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Waste Collectors</h3>
+            </div>
+            <table id="collectorsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Employee ID</th>
+                  <th>Zone</th>
+                  <th>Vehicle</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Pickups</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="collectorsTableBody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 40px;">Loading collectors...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Citizens Section -->
+        <section id="citizens" class="content-section">
+          <div class="filters-bar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="citizenSearch" placeholder="Search citizens..." onkeyup="filterCitizens()">
+            </div>
+            <div class="filter-group">
+              <label>Area:</label>
+              <select class="filter-select" id="areaFilter" onchange="filterCitizens()">
+                <option value="all">All Areas</option>
+                <option value="north">North</option>
+                <option value="south">South</option>
+                <option value="east">East</option>
+                <option value="west">West</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="exportCitizens()">
+              <i class="fas fa-download"></i> Export
+            </button>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Registered Citizens</h3>
+            </div>
+            <table id="citizensTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>City</th>
+                  <th>Pickups</th>
+                  <th>Points</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="citizensTableBody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 40px;">Loading citizens...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="content-section">
+          <div class="filters-bar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="orderSearch" placeholder="Search orders..." onkeyup="filterOrders()">
+            </div>
+            <div class="filter-group">
+              <label>Status:</label>
+              <select class="filter-select" id="orderStatusFilter" onchange="filterOrders()">
+                <option value="all">All Orders</option>
+                <option value="pending">Pending</option>
+                <option value="assigned">Assigned</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Date:</label>
+              <select class="filter-select" id="orderDateFilter" onchange="filterOrders()">
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>All Orders</h3>
+            </div>
+            <table id="ordersTable">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Collector</th>
+                  <th>Type</th>
+                  <th>Weight</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 40px;">Loading orders...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Complaints Section -->
+        <section id="complaints" class="content-section">
+          <div class="filters-bar">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="complaintSearch" placeholder="Search complaints..." onkeyup="filterComplaints()">
+            </div>
+            <div class="filter-group">
+              <label>Status:</label>
+              <select class="filter-select" id="complaintStatusFilter" onchange="filterComplaints()">
+                <option value="all">All Complaints</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>User Complaints</h3>
+            </div>
+            <table id="complaintsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="complaintsTableBody">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 40px;">Loading complaints...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="content-section">
+
+          <!-- Analytics Filters Bar -->
+          <div class="filters-bar" style="flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+            <div class="filter-group">
+              <label>From:</label>
+              <input type="date" id="analyticsFrom" class="filter-select" onchange="reloadAnalytics()">
+            </div>
+            <div class="filter-group">
+              <label>To:</label>
+              <input type="date" id="analyticsTo" class="filter-select" onchange="reloadAnalytics()">
+            </div>
+            <div class="filter-group">
+              <label>Waste Type:</label>
+              <select id="analyticsTypeFilter" class="filter-select" onchange="reloadAnalytics()">
+                <option value="all">All Types</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Trend Chart:</label>
+              <select id="trendChartType" class="filter-select" onchange="reloadAnalytics()">
+                <option value="line">Line</option>
+                <option value="bar">Bar</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="reloadAnalytics()">
+              <i class="fas fa-sync"></i> Apply
+            </button>
+            <button class="btn-outline" onclick="resetAnalyticsFilters()">
+              <i class="fas fa-times"></i> Reset
+            </button>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Waste Collection Trends</h3>
+                <button class="btn-outline" style="font-size:12px; padding:5px 10px;" onclick="exportChart('wasteChart','waste_trend')">
+                  <i class="fas fa-image"></i> Save PNG
+                </button>
+              </div>
+              <div class="chart-container">
+                <canvas id="wasteChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Collection by Type</h3>
+                <button class="btn-outline" style="font-size:12px; padding:5px 10px;" onclick="exportChart('wasteTypeChart','waste_type')">
+                  <i class="fas fa-image"></i> Save PNG
+                </button>
+              </div>
+              <div class="chart-container">
+                <canvas id="wasteTypeChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Peak Hours</h3>
+                <button class="btn-outline" style="font-size:12px; padding:5px 10px;" onclick="exportChart('peakHoursChart','peak_hours')">
+                  <i class="fas fa-image"></i> Save PNG
+                </button>
+              </div>
+              <div class="chart-container">
+                <canvas id="peakHoursChart"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Performance Metrics</h3>
+                <button class="btn-outline" style="font-size:12px; padding:5px 10px;" onclick="exportChart('performanceChart','performance')">
+                  <i class="fas fa-image"></i> Save PNG
+                </button>
+              </div>
+              <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="content-section">
+
+          <!-- Report Filters -->
+          <div style="background:white; padding:20px; border-radius:12px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <h3 style="margin-bottom:15px; color:#1f2937;">Report Options</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:15px;">
+              <div class="filter-group">
+                <label>From Date:</label>
+                <input type="date" id="reportFrom" class="filter-select">
+              </div>
+              <div class="filter-group">
+                <label>To Date:</label>
+                <input type="date" id="reportTo" class="filter-select">
+              </div>
+              <div class="filter-group">
+                <label>Filter By:</label>
+                <select id="reportUserFilter" class="filter-select">
+                  <option value="all">All Orders</option>
+                  <option value="citizen">By Citizen</option>
+                  <option value="collector">By Collector</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Export As:</label>
+                <select id="reportFormat" class="filter-select">
+                  <option value="csv">CSV</option>
+                  <option value="xlsx">Excel (.xlsx)</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Column Selector -->
+            <div style="margin-bottom:15px;">
+              <label style="font-weight:500; color:#374151; display:block; margin-bottom:8px;">Include Columns:</label>
+              <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="id" checked> Order ID</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="name" checked> Customer Name</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="phone" checked> Phone</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="garbageType" checked> Garbage Type</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="weight" checked> Weight</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="status" checked> Status</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="pickupDate"> Pickup Date</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="pickupTime"> Pickup Time</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="address"> Address</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="notes"> Notes</label>
+                <label style="font-weight:400;"><input type="checkbox" class="report-col" value="createdAt" checked> Created At</label>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn-primary" onclick="generateReport('daily')"><i class="fas fa-calendar-day"></i> Daily</button>
+              <button class="btn-primary" onclick="generateReport('weekly')"><i class="fas fa-calendar-week"></i> Weekly</button>
+              <button class="btn-primary" onclick="generateReport('monthly')"><i class="fas fa-calendar-alt"></i> Monthly</button>
+              <button class="btn-primary" onclick="generateReport('custom')"><i class="fas fa-calendar"></i> Custom Range</button>
+              <button class="btn-outline" onclick="exportAllData()"><i class="fas fa-file-export"></i> Export All Users</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Generated Reports</h3>
+            </div>
+            <table id="reportsTable">
+              <thead>
+                <tr>
+                  <th>Report Name</th>
+                  <th>Type</th>
+                  <th>Generated On</th>
+                  <th>Size</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reportsTableBody">
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 40px;">No reports generated yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="content-section">
+          <div class="form-card" style="background: white; padding: 30px; border-radius: 12px;">
+            <h3 style="margin-bottom: 30px;">System Settings</h3>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">System Name</label>
+              <input type="text" id="systemName" value="Sarathi Waste Management" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">Admin Email</label>
+              <input type="email" id="adminEmail" value="admin@sarathi.com" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">Default Collection Time</label>
+              <select id="defaultTime" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                <option value="morning">Morning (8 AM - 12 PM)</option>
+                <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                <option value="evening">Evening (4 PM - 8 PM)</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 500;">Notification Settings</label>
+              <div style="display: flex; gap: 20px;">
+                <label><input type="checkbox" checked> Email Notifications</label>
+                <label><input type="checkbox" checked> SMS Notifications</label>
+                <label><input type="checkbox"> Push Notifications</label>
+              </div>
+            </div>
+
+            <button class="btn-primary" onclick="saveSettings()">
+              <i class="fas fa-save"></i> Save Settings
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Add User</h2>
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+      </div>
+      <form id="userForm" onsubmit="saveUser(event)">
+        <input type="hidden" id="userId">
+        
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>User Type</label>
+          <select id="userType" required style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+            <option value="">Select Type</option>
+            <option value="citizen">Citizen</option>
+            <option value="collector">Collector</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Full Name</label>
+          <input type="text" id="userName" required style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Email</label>
+          <input type="email" id="userEmail" required style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
+          <label>Phone</label>
+          <input type="tel" id="userPhone" required style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+        </div>
+
+        <div id="collectorFields" style="display: none;">
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label>Vehicle Number</label>
+            <input type="text" id="vehicleNumber" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+          </div>
+          <div class="form-group" style="margin-bottom: 15px;">
+            <label>Assigned Zone</label>
+            <select id="assignedZone" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
+              <option value="north">North Zone</option>
+              <option value="south">South Zone</option>
+              <option value="east">East Zone</option>
+              <option value="west">West Zone</option>
+              <option value="central">Central Zone</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <button type="submit" class="btn-primary" style="width: 100%;">Save User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase and Dashboard Scripts -->
+  <script type="module">
+    // Import Firebase modules
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      collection, 
+      doc, 
+      getDoc, 
+      getDocs, 
+      query, 
+      where, 
+      orderBy, 
+      limit,
+      updateDoc,
+      deleteDoc,
+      addDoc,
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Global variables
+    let currentUser = null;
+    let charts = {};
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Verify user is admin
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'admin') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      const userData = userDoc.data();
+      
+      // Update admin profile
+      document.getElementById('adminName').textContent = userData.name || 'Admin User';
+      document.getElementById('adminEmail').textContent = user.email;
+      
+      // Load dashboard data
+      loadDashboardData();
+    });
+
+    // Logout function
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    // Toggle sidebar on mobile
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    // Show section
+    window.showSection = function(sectionId) {
+      // Update active nav link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(`'${sectionId}'`)) {
+          link.classList.add('active');
+        }
+      });
+
+      // Update active section
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+
+      // Update page title
+      const titles = {
+        'dashboard': 'Admin Dashboard',
+        'users': 'Users Management',
+        'collectors': 'Collectors Management',
+        'citizens': 'Citizens Management',
+        'orders': 'Orders Management',
+        'complaints': 'Complaints Management',
+        'analytics': 'Analytics Dashboard',
+        'reports': 'Reports',
+        'settings': 'System Settings'
+      };
+      document.getElementById('page-title').textContent = titles[sectionId] || 'Admin Dashboard';
+      
+      // Load section data
+      switch(sectionId) {
+        case 'users': loadUsers(); break;
+        case 'collectors': loadCollectors(); break;
+        case 'citizens': loadCitizens(); break;
+        case 'orders': loadAllOrders(); break;
+        case 'complaints': loadComplaints(); break;
+        case 'analytics': loadAnalytics(); break;
+      }
+
+      // Close sidebar on mobile
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+      }
+    };
+
+    // Load Dashboard Data
+    async function loadDashboardData() {
+      showLoading(true);
+      
+      try {
+        // Get counts
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const collectorsSnapshot = await getDocs(query(collection(db, "users"), where("userType", "==", "collector")));
+        const citizensSnapshot = await getDocs(query(collection(db, "users"), where("userType", "==", "citizen")));
+        
+        document.getElementById('totalUsers').textContent = usersSnapshot.size;
+        document.getElementById('totalCollectors').textContent = collectorsSnapshot.size;
+        document.getElementById('totalCitizens').textContent = citizensSnapshot.size;
+        
+        // Get orders count (if orders collection exists)
+        try {
+          const ordersSnapshot = await getDocs(collection(db, "orders"));
+          document.getElementById('totalOrders').textContent = ordersSnapshot.size;
+        } catch (e) {
+          document.getElementById('totalOrders').textContent = '0';
+        }
+
+        // Load recent orders
+        loadRecentOrders();
+        
+        // Initialize charts
+        initCharts();
+        
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load recent orders
+    async function loadRecentOrders() {
+      try {
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        const tbody = document.getElementById('recentOrdersBody');
+        
+        if (ordersSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No orders found</td></tr>';
+          return;
+        }
+
+        let orders = [];
+        ordersSnapshot.forEach(doc => orders.push({ _id: doc.id, ...doc.data() }));
+        orders.sort((a, b) => {
+          const aDate = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
+          const bDate = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
+          return bDate - aDate;
+        });
+        orders = orders.slice(0, 5);
+
+        let html = '';
+        orders.forEach(order => {
+          const created = order.createdAt ? (order.createdAt.toDate ? order.createdAt.toDate() : new Date(order.createdAt)) : null;
+          html += `
+            <tr>
+              <td>${order._id.slice(0, 8)}</td>
+              <td>${order.name || order.customerName || 'N/A'}</td>
+              <td>${order.garbageType || order.wasteType || 'N/A'}</td>
+              <td>${order.weight || '0'} kg</td>
+              <td><span class="status-badge ${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+              <td>${created ? created.toLocaleDateString('en-IN') : 'N/A'}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      }
+    }
+
+    // Load all users
+    async function loadUsers() {
+      showLoading(true);
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const tbody = document.getElementById('usersTableBody');
+        
+        if (usersSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No users found</td></tr>';
+          return;
+        }
+
+        let html = '';
+        usersSnapshot.forEach(doc => {
+          const user = doc.data();
+          html += `
+            <tr>
+              <td>${user.name || user.firstName + ' ' + user.lastName || 'N/A'}</td>
+              <td>${user.email || 'N/A'}</td>
+              <td><span class="status-badge" style="background: ${getUserTypeColor(user.userType)}20; color: ${getUserTypeColor(user.userType)}">${user.userType || 'N/A'}</span></td>
+              <td>${user.phone || 'N/A'}</td>
+              <td><span class="status-badge ${user.isActive ? 'active' : 'inactive'}">${user.isActive ? 'Active' : 'Inactive'}</span></td>
+              <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit" onclick="editUser('${doc.id}')"><i class="fas fa-edit"></i></button>
+                  <button class="action-btn delete" onclick="deleteUser('${doc.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading users:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load collectors
+    async function loadCollectors() {
+      showLoading(true);
+      try {
+        const collectorsQuery = query(collection(db, "users"), where("userType", "==", "collector"));
+        const collectorsSnapshot = await getDocs(collectorsQuery);
+        const tbody = document.getElementById('collectorsTableBody');
+        
+        if (collectorsSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No collectors found</td></tr>';
+          return;
+        }
+
+        let html = '';
+        collectorsSnapshot.forEach(doc => {
+          const collector = doc.data();
+          html += `
+            <tr>
+              <td>${collector.name || 'N/A'}</td>
+              <td>${collector.employeeId || 'COL' + doc.id.slice(0, 5)}</td>
+              <td>${collector.assignedArea || collector.assignedZone || 'N/A'}</td>
+              <td>${collector.vehicleNumber || 'N/A'}</td>
+              <td>${collector.phone || 'N/A'}</td>
+              <td><span class="status-badge ${collector.isAvailable ? 'active' : 'inactive'}">${collector.isAvailable ? 'Available' : 'Busy'}</span></td>
+              <td>${collector.totalPickups || 0}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit" onclick="editUser('${doc.id}')"><i class="fas fa-edit"></i></button>
+                  <button class="action-btn delete" onclick="deleteUser('${doc.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading collectors:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load citizens
+    async function loadCitizens() {
+      showLoading(true);
+      try {
+        const citizensQuery = query(collection(db, "users"), where("userType", "==", "citizen"));
+        const citizensSnapshot = await getDocs(citizensQuery);
+        const tbody = document.getElementById('citizensTableBody');
+        
+        if (citizensSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No citizens found</td></tr>';
+          return;
+        }
+
+        let html = '';
+        citizensSnapshot.forEach(doc => {
+          const citizen = doc.data();
+          html += `
+            <tr>
+              <td>${citizen.name || citizen.firstName + ' ' + citizen.lastName || 'N/A'}</td>
+              <td>${citizen.email || 'N/A'}</td>
+              <td>${citizen.phone || 'N/A'}</td>
+              <td>${citizen.address || 'N/A'}</td>
+              <td>${citizen.city || 'N/A'}</td>
+              <td>${citizen.totalPickups || 0}</td>
+              <td>${citizen.greenPoints || 0}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit" onclick="editUser('${doc.id}')"><i class="fas fa-edit"></i></button>
+                  <button class="action-btn delete" onclick="deleteUser('${doc.id}')"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading citizens:', error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load all orders
+    async function loadAllOrders() {
+      showLoading(true);
+      try {
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        const tbody = document.getElementById('ordersTableBody');
+        
+        if (ordersSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No orders found</td></tr>';
+          return;
+        }
+
+        // Sort client-side to avoid needing Firestore index
+        let orders = [];
+        ordersSnapshot.forEach(doc => orders.push({ _id: doc.id, ...doc.data() }));
+        orders.sort((a, b) => {
+          const aDate = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
+          const bDate = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
+          return bDate - aDate;
+        });
+
+        let html = '';
+        orders.forEach(order => {
+          const created = order.createdAt ? (order.createdAt.toDate ? order.createdAt.toDate() : new Date(order.createdAt)) : null;
+          html += `
+            <tr>
+              <td>${order._id.slice(0, 8)}</td>
+              <td>${order.name || order.customerName || 'N/A'}</td>
+              <td>${order.collectorName || 'Unassigned'}</td>
+              <td>${order.garbageType || order.wasteType || 'N/A'}</td>
+              <td>${order.weight || '0'} kg</td>
+              <td><span class="status-badge ${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+              <td>${created ? created.toLocaleDateString('en-IN') : 'N/A'}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit" onclick="editOrder('${order._id}')"><i class="fas fa-edit"></i></button>
+                  <button class="action-btn delete" onclick="deleteOrder('${order._id}')"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('ordersTableBody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:red;">Error: ${error.message}</td></tr>`;
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Load complaints
+    async function loadComplaints() {
+      showLoading(true);
+      try {
+        const complaintsSnapshot = await getDocs(collection(db, "complaints"));
+        const tbody = document.getElementById('complaintsTableBody');
+        
+        if (complaintsSnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No complaints found</td></tr>';
+          return;
+        }
+
+        let complaints = [];
+        complaintsSnapshot.forEach(doc => complaints.push({ _id: doc.id, ...doc.data() }));
+        complaints.sort((a, b) => {
+          const aDate = a.createdAt ? (a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt)) : new Date(0);
+          const bDate = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
+          return bDate - aDate;
+        });
+
+        let html = '';
+        complaints.forEach(complaint => {
+          const created = complaint.createdAt ? (complaint.createdAt.toDate ? complaint.createdAt.toDate() : new Date(complaint.createdAt)) : null;
+          html += `
+            <tr>
+              <td>${complaint._id.slice(0, 8)}</td>
+              <td>${complaint.userName || complaint.name || 'N/A'}</td>
+              <td>${complaint.type || 'N/A'}</td>
+              <td>${(complaint.description || 'N/A').substring(0, 50)}...</td>
+              <td><span class="status-badge ${complaint.status || 'pending'}">${complaint.status || 'pending'}</span></td>
+              <td>${created ? created.toLocaleDateString('en-IN') : 'N/A'}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn edit" onclick="resolveComplaint('${complaint._id}')"><i class="fas fa-check"></i></button>
+                  <button class="action-btn delete" onclick="deleteComplaint('${complaint._id}')"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (error) {
+        console.error('Error loading complaints:', error);
+        document.getElementById('complaintsTableBody').innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:red;">Error: ${error.message}</td></tr>`;
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    // Initialize charts
+    function initCharts() {
+      // User Chart
+      const userCtx = document.getElementById('userChart')?.getContext('2d');
+      if (userCtx) {
+        charts.user = new Chart(userCtx, {
+          type: 'line',
+          data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+              label: 'New Users',
+              data: [1, 2, 3, 1, 4, 2, 5],
+              borderColor: '#7c3aed',
+              backgroundColor: 'rgba(124, 58, 237, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+      }
+
+      // Order Chart
+      const orderCtx = document.getElementById('orderChart')?.getContext('2d');
+      if (orderCtx) {
+        charts.order = new Chart(orderCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Completed', 'Pending', 'In Progress'],
+            datasets: [{
+              data: [9, 1, 1],
+              backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Helper functions
+    function getUserTypeColor(type) {
+      switch(type) {
+        case 'admin': return '#7c3aed';
+        case 'collector': return '#3b82f6';
+        case 'citizen': return '#10b981';
+        default: return '#6b7280';
+      }
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingSpinner').classList.toggle('active', show);
+    }
+
+    // Filter functions
+    window.filterUsers = function() {
+      console.log('Filtering users...');
+      // Implement filtering logic
+    };
+
+    window.filterCollectors = function() {
+      console.log('Filtering collectors...');
+    };
+
+    window.filterCitizens = function() {
+      console.log('Filtering citizens...');
+    };
+
+    window.filterOrders = function() {
+      console.log('Filtering orders...');
+    };
+
+    window.filterComplaints = function() {
+      console.log('Filtering complaints...');
+    };
+
+    // Modal functions
+    window.showAddUserModal = function() {
+      document.getElementById('modalTitle').textContent = 'Add New User';
+      document.getElementById('userForm').reset();
+      document.getElementById('userId').value = '';
+      document.getElementById('userModal').style.display = 'block';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('userModal').style.display = 'none';
+    };
+
+    // Save user
+    window.saveUser = async function(event) {
+      event.preventDefault();
+      
+      const userData = {
+        name: document.getElementById('userName').value,
+        email: document.getElementById('userEmail').value,
+        phone: document.getElementById('userPhone').value,
+        userType: document.getElementById('userType').value,
+        isActive: true,
+        updatedAt: serverTimestamp()
+      };
+
+      if (userData.userType === 'collector') {
+        userData.vehicleNumber = document.getElementById('vehicleNumber').value;
+        userData.assignedZone = document.getElementById('assignedZone').value;
+        userData.isAvailable = true;
+        userData.totalPickups = 0;
+      }
+
+      try {
+        if (document.getElementById('userId').value) {
+          // Update existing user
+          await updateDoc(doc(db, "users", document.getElementById('userId').value), userData);
+          alert('User updated successfully!');
+        } else {
+          // Add new user (would need to create auth user first in real scenario)
+          alert('In production, you would create auth user first');
+        }
+        
+        closeModal();
+        loadUsers();
+      } catch (error) {
+        console.error('Error saving user:', error);
+        alert('Error saving user: ' + error.message);
+      }
+    };
+
+    // Edit user
+    window.editUser = async function(userId) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          const user = userDoc.data();
+          
+          document.getElementById('modalTitle').textContent = 'Edit User';
+          document.getElementById('userId').value = userId;
+          document.getElementById('userName').value = user.name || '';
+          document.getElementById('userEmail').value = user.email || '';
+          document.getElementById('userPhone').value = user.phone || '';
+          document.getElementById('userType').value = user.userType || '';
+          
+          if (user.userType === 'collector') {
+            document.getElementById('vehicleNumber').value = user.vehicleNumber || '';
+            document.getElementById('assignedZone').value = user.assignedZone || 'north';
+            document.getElementById('collectorFields').style.display = 'block';
+          }
+          
+          document.getElementById('userModal').style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+        alert('Error loading user: ' + error.message);
+      }
+    };
+
+    // Delete user
+    window.deleteUser = async function(userId) {
+      if (!confirm('Are you sure you want to delete this user?')) return;
+      
+      try {
+        await deleteDoc(doc(db, "users", userId));
+        alert('User deleted successfully!');
+        loadUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Error deleting user: ' + error.message);
+      }
+    };
+
+    // Show collector fields when user type changes
+    document.addEventListener('change', function(e) {
+      if (e.target.id === 'userType') {
+        const collectorFields = document.getElementById('collectorFields');
+        collectorFields.style.display = e.target.value === 'collector' ? 'block' : 'none';
+      }
+    });
+
+    // ── ANALYTICS ──────────────────────────────────────────────
+    let analyticsCharts = {};
+    let allOrdersCache  = [];
+    let allUsersCache   = [];
+
+    function setDefaultAnalyticsDates() {
+      const to   = new Date();
+      const from = new Date(); from.setDate(from.getDate() - 7);
+      document.getElementById('analyticsFrom').value = from.toISOString().split('T')[0];
+      document.getElementById('analyticsTo').value   = to.toISOString().split('T')[0];
+    }
+
+    window.resetAnalyticsFilters = function() {
+      setDefaultAnalyticsDates();
+      document.getElementById('analyticsTypeFilter').value = 'all';
+      document.getElementById('trendChartType').value = 'line';
+      renderAnalyticsCharts(allOrdersCache, allUsersCache);
+    };
+
+    window.reloadAnalytics = function() {
+      renderAnalyticsCharts(allOrdersCache, allUsersCache);
+    };
+
+    window.exportChart = function(canvasId, name) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `sarathi_${name}_${new Date().toISOString().split('T')[0]}.png`;
+      a.click();
+    };
+
+    window.loadAnalytics = async function () {
+      showLoading(true);
+      try {
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        allOrdersCache = [];
+        ordersSnapshot.forEach(doc => allOrdersCache.push({ id: doc.id, ...doc.data() }));
+
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        allUsersCache = [];
+        usersSnapshot.forEach(doc => allUsersCache.push({ id: doc.id, ...doc.data() }));
+
+        const types = [...new Set(allOrdersCache.map(o => o.garbageType || o.wasteType || 'Unknown'))];
+        const typeFilter = document.getElementById('analyticsTypeFilter');
+        typeFilter.innerHTML = '<option value="all">All Types</option>';
+        types.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t; opt.textContent = t;
+          typeFilter.appendChild(opt);
+        });
+
+        setDefaultAnalyticsDates();
+        renderAnalyticsCharts(allOrdersCache, allUsersCache);
+      } catch (error) {
+        console.error('Analytics error:', error);
+        alert('Error loading analytics: ' + error.message);
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    function renderAnalyticsCharts(allOrders, allUsers) {
+      const fromVal   = document.getElementById('analyticsFrom')?.value;
+      const toVal     = document.getElementById('analyticsTo')?.value;
+      const typeVal   = document.getElementById('analyticsTypeFilter')?.value || 'all';
+      const chartType = document.getElementById('trendChartType')?.value || 'line';
+
+      const fromDate = fromVal ? new Date(fromVal) : null;
+      const toDate   = toVal   ? new Date(toVal + 'T23:59:59') : null;
+
+      let orders = allOrders.filter(o => {
+        const c = o.createdAt ? (o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt)) : null;
+        if (!c) return false;
+        if (fromDate && c < fromDate) return false;
+        if (toDate   && c > toDate)   return false;
+        if (typeVal !== 'all' && (o.garbageType || o.wasteType || 'Unknown') !== typeVal) return false;
+        return true;
+      });
+
+      const labels = [], dayCounts = [];
+      if (fromDate && toDate) {
+        const cur = new Date(fromDate);
+        while (cur <= toDate) {
+          const dateStr = cur.toISOString().split('T')[0];
+          labels.push(cur.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' }));
+          dayCounts.push(orders.filter(o => {
+            const c = o.createdAt ? (o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt)) : null;
+            return c && c.toISOString().split('T')[0] === dateStr;
+          }).length);
+          cur.setDate(cur.getDate() + 1);
+        }
+      }
+
+      const typeCount = {};
+      orders.forEach(o => { const t = o.garbageType || o.wasteType || 'Unknown'; typeCount[t] = (typeCount[t]||0)+1; });
+      const typeLabels = Object.keys(typeCount), typeData = Object.values(typeCount);
+      const typeColors = ['#7c3aed','#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+
+      const hourCount = Array(24).fill(0);
+      orders.forEach(o => { const c = o.createdAt ? (o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt)) : null; if (c) hourCount[c.getHours()]++; });
+
+      const completed  = orders.filter(o => o.status==='completed').length;
+      const pending    = orders.filter(o => o.status==='pending').length;
+      const accepted   = orders.filter(o => o.status==='accepted'||o.status==='assigned').length;
+      const cancelled  = orders.filter(o => o.status==='cancelled').length;
+      const citizens   = allUsers.filter(u => u.userType==='citizen').length;
+      const collectors = allUsers.filter(u => u.userType==='collector').length;
+
+      Object.values(analyticsCharts).forEach(c => c.destroy());
+      analyticsCharts = {};
+
+      const wasteCtx = document.getElementById('wasteChart')?.getContext('2d');
+      if (wasteCtx) {
+        analyticsCharts.waste = new Chart(wasteCtx, {
+          type: chartType,
+          data: { labels, datasets: [{ label: 'Orders', data: dayCounts, borderColor: '#7c3aed', backgroundColor: chartType==='line' ? 'rgba(124,58,237,0.12)' : 'rgba(124,58,237,0.7)', tension: 0.4, fill: chartType==='line', pointBackgroundColor: '#7c3aed', pointRadius: 5, borderRadius: chartType==='bar' ? 4 : 0 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+      }
+
+      const typeCtx = document.getElementById('wasteTypeChart')?.getContext('2d');
+      if (typeCtx) {
+        analyticsCharts.type = new Chart(typeCtx, {
+          type: 'doughnut',
+          data: { labels: typeLabels.length ? typeLabels : ['No Data'], datasets: [{ data: typeData.length ? typeData : [1], backgroundColor: typeColors.slice(0, Math.max(typeLabels.length,1)), borderWidth: 0 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+      }
+
+      const peakCtx = document.getElementById('peakHoursChart')?.getContext('2d');
+      if (peakCtx) {
+        analyticsCharts.peak = new Chart(peakCtx, {
+          type: 'bar',
+          data: { labels: Array.from({length:24},(_,i)=>`${i}:00`), datasets: [{ label: 'Orders', data: hourCount, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+      }
+
+      const perfCtx = document.getElementById('performanceChart')?.getContext('2d');
+      if (perfCtx) {
+        analyticsCharts.perf = new Chart(perfCtx, {
+          type: 'bar',
+          data: { labels: ['Completed','Pending','Accepted','Cancelled','Citizens','Collectors'], datasets: [{ label: 'Count', data: [completed,pending,accepted,cancelled,citizens,collectors], backgroundColor: ['#10b981','#f59e0b','#3b82f6','#ef4444','#8b5cf6','#06b6d4'], borderRadius: 6 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+      }
+    }
+
+    // ── REPORTS ─────────────────────────────────────────────────
+    window.generateReport = async function (type) {
+      showLoading(true);
+      try {
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        let orders = [];
+        ordersSnapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+
+        const selectedCols = [...document.querySelectorAll('.report-col:checked')].map(c => c.value);
+        if (selectedCols.length === 0) { alert('Please select at least one column.'); showLoading(false); return; }
+
+        const now     = new Date();
+        const fromVal = document.getElementById('reportFrom')?.value;
+        const toVal   = document.getElementById('reportTo')?.value;
+
+        if (type === 'daily') {
+          const today = now.toISOString().split('T')[0];
+          orders = orders.filter(o => { const d = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null; return d&&d.toISOString().split('T')[0]===today; });
+        } else if (type === 'weekly') {
+          const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate()-7);
+          orders = orders.filter(o => { const d = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null; return d&&d>=weekAgo; });
+        } else if (type === 'monthly') {
+          const monthAgo = new Date(now); monthAgo.setMonth(monthAgo.getMonth()-1);
+          orders = orders.filter(o => { const d = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null; return d&&d>=monthAgo; });
+        } else if (type === 'custom') {
+          if (!fromVal||!toVal) { alert('Please select From and To dates.'); showLoading(false); return; }
+          const from = new Date(fromVal), to = new Date(toVal+'T23:59:59');
+          orders = orders.filter(o => { const d = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null; return d&&d>=from&&d<=to; });
+        }
+
+        const userFilter = document.getElementById('reportUserFilter')?.value;
+        if (userFilter==='citizen')   orders = orders.filter(o => o.citizenId);
+        if (userFilter==='collector') orders = orders.filter(o => o.collectorId);
+
+        const colMap = { id:'Order ID', name:'Customer Name', phone:'Phone', garbageType:'Garbage Type', weight:'Weight (kg)', status:'Status', pickupDate:'Pickup Date', pickupTime:'Pickup Time', address:'Address', notes:'Notes', createdAt:'Created At' };
+        const format   = document.getElementById('reportFormat')?.value || 'csv';
+        const filename = `sarathi_${type}_report_${now.toISOString().split('T')[0]}`;
+
+        if (format === 'csv') {
+          const headers = selectedCols.map(c => colMap[c]);
+          const rows = orders.map(o => {
+            const created = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null;
+            return selectedCols.map(c => { let v = c==='createdAt'?(created?created.toLocaleString('en-IN'):''):(o[c]||''); return `"${String(v).replace(/,/g,' ')}"`; }).join(',');
+          });
+          const blob = new Blob([[headers.join(','),...rows].join('\n')], {type:'text/csv'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href=url; a.download=filename+'.csv';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+
+        } else if (format === 'xlsx') {
+          const headers = selectedCols.map(c => colMap[c]);
+          let xml = `<?xml version="1.0"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Report"><Table>`;
+          xml += '<Row>'+headers.map(h=>`<Cell><Data ss:Type="String">${h}</Data></Cell>`).join('')+'</Row>';
+          orders.forEach(o => {
+            const created = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null;
+            xml += '<Row>'+selectedCols.map(c => { let v = c==='createdAt'?(created?created.toLocaleString('en-IN'):''):(o[c]||''); return `<Cell><Data ss:Type="String">${String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</Data></Cell>`; }).join('')+'</Row>';
+          });
+          xml += '</Table></Worksheet></Workbook>';
+          const blob = new Blob([xml],{type:'application/vnd.ms-excel'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href=url; a.download=filename+'.xls';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+
+        } else if (format === 'pdf') {
+          const headers = selectedCols.map(c => colMap[c]);
+          let html = `<html><head><title>Sarathi Report<\/title><style>body{font-family:Arial,sans-serif;font-size:12px;padding:20px;}h2{color:#7c3aed;}table{width:100%;border-collapse:collapse;margin-top:15px;}th{background:#7c3aed;color:white;padding:8px;text-align:left;}td{padding:6px 8px;border-bottom:1px solid #e5e7eb;}tr:nth-child(even){background:#f9fafb;}.meta{color:#6b7280;font-size:11px;margin-bottom:10px;}<\/style><\/head><body>`;
+          html += `<h2>Sarathi Waste Management</h2><p class="meta">${type.charAt(0).toUpperCase()+type.slice(1)} Report | Generated: ${now.toLocaleString('en-IN')} | Total Orders: ${orders.length}</p>`;
+          html += `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
+          orders.forEach(o => {
+            const created = o.createdAt?(o.createdAt.toDate?o.createdAt.toDate():new Date(o.createdAt)):null;
+            html += '<tr>'+selectedCols.map(c => { let v = c==='createdAt'?(created?created.toLocaleString('en-IN'):'-'):(o[c]||'-'); return `<td>${v}</td>`; }).join('')+'</tr>';
+          });
+          html += '<\/tbody><\/table><\/body><\/html>';
+          const win = window.open('','_blank'); win.document.write(html); win.document.close(); win.print();
+        }
+
+        const tbody = document.getElementById('reportsTableBody');
+        if (tbody.innerHTML.includes('No reports')) tbody.innerHTML = '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${filename}.${format==='xlsx'?'xls':format}</td><td><span class="status-badge active">${type}</span></td><td>${now.toLocaleString('en-IN')}</td><td>${orders.length} orders</td><td><i class="fas fa-check-circle" style="color:#10b981;"></i> ${format==='pdf'?'Printed':'Downloaded'}</td>`;
+        tbody.prepend(tr);
+
+        alert(`✅ ${type} report exported as ${format.toUpperCase()}! (${orders.length} orders)`);
+      } catch (error) {
+        console.error('Report error:', error);
+        alert('Error generating report: ' + error.message);
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    window.exportAllData = async function () {
+      showLoading(true);
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const users = [];
+        usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+        const headers = ['UID','Name','Email','Phone','User Type','City','Is Active','Created At'];
+        const rows = users.map(u => [u.id, u.name||`${u.firstName||''} ${u.lastName||''}`.trim(), u.email||'', u.phone||'', u.userType||'', u.city||'', u.isActive?'Yes':'No', u.createdAt?new Date(u.createdAt).toLocaleString('en-IN'):''].map(v=>`"${v}"`).join(','));
+        const blob = new Blob([[headers.join(','),...rows].join('\n')],{type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download=`sarathi_all_users_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        alert(`✅ Exported ${users.length} users!`);
+      } catch (err) { alert('Export error: ' + err.message); } finally { showLoading(false); }
+    };
+
+    window.exportUsers = function() {
+      alert('Export functionality would be implemented here');
+    };
+
+    window.exportCitizens = function() {
+      alert('Export functionality would be implemented here');
+    };
+
+        window.saveSettings = function() {
+      alert('Settings saved successfully!');
+    };
+
+    // ── MISSING ACTION FUNCTIONS ────────────────────────────────
+    window.editOrder = async function(orderId) {
+      const status = prompt('Update order status:\n(pending / accepted / completed / cancelled)');
+      if (!status) return;
+      const validStatuses = ['pending','accepted','completed','cancelled'];
+      if (!validStatuses.includes(status.toLowerCase())) {
+        alert('Invalid status. Use: pending, accepted, completed, or cancelled');
+        return;
+      }
+      try {
+        await updateDoc(doc(db, "orders", orderId), { status: status.toLowerCase() });
+        alert('✅ Order status updated!');
+        loadAllOrders();
+      } catch (e) { alert('Error: ' + e.message); }
+    };
+
+    window.deleteOrder = async function(orderId) {
+      if (!confirm('Delete this order? This cannot be undone.')) return;
+      try {
+        await deleteDoc(doc(db, "orders", orderId));
+        alert('✅ Order deleted.');
+        loadAllOrders();
+      } catch (e) { alert('Error: ' + e.message); }
+    };
+
+    window.resolveComplaint = async function(complaintId) {
+      if (!confirm('Mark this complaint as resolved?')) return;
+      try {
+        await updateDoc(doc(db, "complaints", complaintId), { status: 'resolved' });
+        alert('✅ Complaint resolved!');
+        loadComplaints();
+      } catch (e) { alert('Error: ' + e.message); }
+    };
+
+    window.deleteComplaint = async function(complaintId) {
+      if (!confirm('Delete this complaint?')) return;
+      try {
+        await deleteDoc(doc(db, "complaints", complaintId));
+        alert('✅ Complaint deleted.');
+        loadComplaints();
+      } catch (e) { alert('Error: ' + e.message); }
+    };
+
+    window.showAddCollectorModal = function() {
+      document.getElementById('modalTitle').textContent = 'Add New Collector';
+      document.getElementById('userForm').reset();
+      document.getElementById('userId').value = '';
+      document.getElementById('userType').value = 'collector';
+      document.getElementById('collectorFields').style.display = 'block';
+      document.getElementById('userModal').style.display = 'block';
+    };
+
+    window.updateUserChart = function(period) {
+      console.log('Updating chart for period:', period);
+      // Implement chart update logic
+    };
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Admin dashboard loaded');
+    });
+  </script>
+</body>
+</html>

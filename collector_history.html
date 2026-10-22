@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection History - Sarathi Waste Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <style>
+    :root {
+      --collector-primary: #3b82f6;
+      --collector-secondary: #2563eb;
+      --collector-accent: #60a5fa;
+      --collector-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: var(--collector-gradient);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #60a5fa;
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(59, 130, 246, 0.3);
+      border-left-color: #60a5fa;
+      color: white;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .page-title h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .page-title p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1f2937;
+      background: white;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .btn-export {
+      background: white;
+      color: #1f2937;
+      border: 1px solid #e5e7eb;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-export:hover {
+      background: #f3f4f6;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(59, 130, 246, 0.15);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--collector-gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: #3b82f6;
+      margin-top: 2px;
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .chart-header h3 {
+      font-size: 18px;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chart-header h3 i {
+      color: #3b82f6;
+    }
+
+    canvas {
+      max-height: 300px;
+      width: 100%;
+    }
+
+    /* History List */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .history-item {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .history-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .history-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3b82f6;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .history-details {
+      flex: 1;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .history-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .history-date {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .history-meta {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .history-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .history-meta-item i {
+      color: #3b82f6;
+      font-size: 12px;
+    }
+
+    .history-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 12px;
+    }
+
+    .empty-state i {
+      font-size: 60px;
+      color: #3b82f6;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 20px;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .page-btn:hover {
+      background: #dbeafe;
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+
+    .page-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .filter-section {
+        flex-direction: column;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .history-meta {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-truck"></i>
+          <span>Sarathi Collector</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="collector_dashboard.html" class="nav-link">
+            <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="collector_tasks.html" class="nav-link">
+            <i class="fas fa-tasks"></i><span>My Tasks</span></a></li>
+          <li><a href="collector_scanner.html" class="nav-link">
+            <i class="fas fa-qrcode"></i><span>QR Scanner</span></a></li>
+          <li><a href="collector_route.html" class="nav-link">
+            <i class="fas fa-map-marked-alt"></i><span>Route Map</span></a></li>
+          <li><a href="collector_history.html" class="nav-link active">
+            <i class="fas fa-history"></i><span>History</span></a></li>
+          <li><a href="collector_profile.html" class="nav-link">
+            <i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="user-email" id="userEmail">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="page-title">
+          <h1>Collection History</h1>
+          <p>Track your completed collections and earnings</p>
+        </div>
+      </header>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="filter-group">
+          <select class="filter-select" id="periodFilter" onchange="filterHistory()">
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <select class="filter-select" id="typeFilter" onchange="filterHistory()">
+            <option value="all">All Waste Types</option>
+            <option value="wet">Wet Waste</option>
+            <option value="dry">Dry Waste</option>
+            <option value="e-waste">E-Waste</option>
+            <option value="hazardous">Hazardous</option>
+          </select>
+        </div>
+        <button class="btn-export" onclick="exportData()">
+          <i class="fas fa-download"></i> Export CSV
+        </button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Total Collections</span>
+            <span class="stat-value" id="totalCollections">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-weight"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Total Waste</span>
+            <span class="stat-value" id="totalWaste">0 kg</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Points Given</span>
+            <span class="stat-value" id="totalPoints">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-route"></i>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Est. Distance</span>
+            <span class="stat-value" id="totalDistance">0 km</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3>
+            <i class="fas fa-chart-line"></i>
+            Weekly Performance
+          </h3>
+        </div>
+        <canvas id="historyChart"></canvas>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner active">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: #6b7280;">Loading history...</p>
+      </div>
+
+      <!-- History List -->
+      <div id="historyList" class="history-list" style="display: none;"></div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fas fa-history"></i>
+        <h3>No History Found</h3>
+        <p>Your completed collections will appear here.</p>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" class="pagination" style="display: none;">
+        <button class="page-btn" onclick="changePage('prev')"><i class="fas fa-chevron-left"></i></button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn" onclick="changePage('next')"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import { 
+      collection, 
+      doc, 
+      getDoc, 
+      getDocs, 
+      query, 
+      where, 
+      orderBy,
+      updateDoc 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    let currentUser = null;
+    let currentUserData = null;
+    let chart = null;
+    let allHistory = [];
+    let filteredHistory = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'collector') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      currentUserData = userDoc.data();
+      
+      document.getElementById('userName').textContent = currentUserData.name || 'Collector';
+      document.getElementById('userEmail').textContent = user.email;
+      
+      loadHistoryData();
+    });
+
+    window.logout = async function() {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    function normalizeOrderDate(order) {
+      const rawDate = order.completedAt || order.updatedAt || order.startedAt || order.acceptedAt || order.createdAt;
+
+      if (!rawDate) return new Date();
+      if (typeof rawDate.toDate === 'function') return rawDate.toDate();
+
+      const parsedDate = new Date(rawDate);
+      return Number.isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+    }
+
+    async function loadHistoryData() {
+      showLoading(true);
+      
+      try {
+        let historySnapshot;
+
+        try {
+          const historyQuery = query(
+            collection(db, "orders"),
+            where("collectorId", "==", currentUser.uid),
+            where("status", "==", "completed"),
+            orderBy("completedAt", "desc")
+          );
+          historySnapshot = await getDocs(historyQuery);
+        } catch (queryError) {
+          console.warn('Falling back to local history sorting:', queryError);
+          const fallbackQuery = query(
+            collection(db, "orders"),
+            where("collectorId", "==", currentUser.uid)
+          );
+          historySnapshot = await getDocs(fallbackQuery);
+        }
+        
+        allHistory = [];
+        historySnapshot.forEach(doc => {
+          const order = doc.data();
+          if (order.status !== 'completed') return;
+
+          const completedAt = normalizeOrderDate(order);
+          
+          allHistory.push({
+            id: doc.id,
+            ...order,
+            completedAt: completedAt,
+            date: completedAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            timestamp: completedAt.getTime(),
+            points: Math.floor(parseFloat(order.weight || 0) * 10)
+          });
+        });
+
+        allHistory.sort((a, b) => b.timestamp - a.timestamp);
+        
+        if (allHistory.length === 0) {
+          document.getElementById('loadingSpinner').classList.remove('active');
+          document.getElementById('emptyState').style.display = 'block';
+          document.getElementById('historyList').style.display = 'none';
+          document.getElementById('pagination').style.display = 'none';
+          return;
+        }
+
+        updateStats(allHistory);
+        updateChart(allHistory);
+        filterHistory();
+        
+      } catch (error) {
+        console.error('Error loading history:', error);
+        showLoading(false);
+      }
+    }
+
+    function updateStats(data) {
+      const totalCollections = data.length;
+      const totalWaste = data.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0);
+      const totalPoints = data.reduce((sum, item) => sum + (item.points || 0), 0);
+      const totalDistance = Math.round(totalCollections * 2.5); // Rough estimate
+      
+      document.getElementById('totalCollections').textContent = totalCollections;
+      document.getElementById('totalWaste').textContent = totalWaste.toFixed(1) + ' kg';
+      document.getElementById('totalPoints').textContent = totalPoints;
+      document.getElementById('totalDistance').textContent = totalDistance + ' km';
+    }
+
+    function updateChart(data) {
+      // Group by date
+      const dailyData = {};
+      const last7Days = [];
+      
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toLocaleDateString('en-US', { weekday: 'short' });
+        last7Days.push(dateStr);
+        dailyData[dateStr] = 0;
+      }
+      
+      data.forEach(item => {
+        const date = new Date(item.timestamp);
+        const dateStr = date.toLocaleDateString('en-US', { weekday: 'short' });
+        if (dailyData.hasOwnProperty(dateStr)) {
+          dailyData[dateStr] += parseFloat(item.weight) || 0;
+        }
+      });
+      
+      const values = last7Days.map(day => dailyData[day]);
+      
+      if (chart) {
+        chart.destroy();
+      }
+      
+      const ctx = document.getElementById('historyChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: last7Days,
+          datasets: [{
+            label: 'Waste Collected (kg)',
+            data: values,
+            backgroundColor: '#3b82f6',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: '#e5e7eb'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    window.filterHistory = function() {
+      const period = document.getElementById('periodFilter').value;
+      const type = document.getElementById('typeFilter').value;
+      
+      let filtered = [...allHistory];
+      const now = Date.now();
+      
+      if (period === 'today') {
+        const today = new Date().setHours(0,0,0,0);
+        filtered = filtered.filter(d => d.timestamp >= today);
+      } else if (period === 'week') {
+        const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+        filtered = filtered.filter(d => d.timestamp >= weekAgo);
+      } else if (period === 'month') {
+        const monthAgo = now - 30 * 24 * 60 * 60 * 1000;
+        filtered = filtered.filter(d => d.timestamp >= monthAgo);
+      } else if (period === 'year') {
+        const yearAgo = now - 365 * 24 * 60 * 60 * 1000;
+        filtered = filtered.filter(d => d.timestamp >= yearAgo);
+      }
+      
+      if (type !== 'all') {
+        filtered = filtered.filter(d => d.wasteType === type);
+      }
+      
+      filteredHistory = filtered;
+      currentPage = 1;
+      
+      updateStats(filtered);
+      updateChart(filtered);
+      displayHistory();
+    };
+
+    function displayHistory() {
+      const listDiv = document.getElementById('historyList');
+      const emptyState = document.getElementById('emptyState');
+      const pagination = document.getElementById('pagination');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      
+      if (filteredHistory.length === 0) {
+        loadingSpinner.classList.remove('active');
+        listDiv.style.display = 'none';
+        pagination.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const paginatedItems = filteredHistory.slice(start, end);
+      
+      updatePagination();
+      
+      let html = '';
+      
+      paginatedItems.forEach(item => {
+        const wasteIcon = item.wasteType === 'wet' ? 'fa-droplet' :
+                         item.wasteType === 'dry' ? 'fa-recycle' :
+                         item.wasteType === 'e-waste' ? 'fa-battery-full' :
+                         item.wasteType === 'hazardous' ? 'fa-triangle-exclamation' : 'fa-trash';
+        
+        html += `
+          <div class="history-item">
+            <div class="history-icon">
+              <i class="fas ${wasteIcon}"></i>
+            </div>
+            <div class="history-details">
+              <div class="history-header">
+                <span class="history-title">${item.customerName || 'Customer'}</span>
+                <span class="history-date">${item.date}</span>
+              </div>
+              <div class="history-meta">
+                <span class="history-meta-item">
+                  <i class="fas fa-hashtag"></i> ${item.orderId || item.id.slice(0, 8)}
+                </span>
+                <span class="history-meta-item">
+                  <i class="fas fa-trash"></i> ${item.wasteType || 'N/A'} - ${item.weight || 0}kg
+                </span>
+                <span class="history-meta-item">
+                  <i class="fas fa-star"></i> ${item.points} points
+                </span>
+              </div>
+              <span class="history-badge">
+                <i class="fas fa-check-circle"></i> Completed
+              </span>
+            </div>
+          </div>
+        `;
+      });
+      
+      listDiv.innerHTML = html;
+      
+      loadingSpinner.classList.remove('active');
+      listDiv.style.display = 'flex';
+      emptyState.style.display = 'none';
+      pagination.style.display = 'flex';
+    }
+
+    function updatePagination() {
+      const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+      const pagination = document.getElementById('pagination');
+      
+      let html = '<button class="page-btn" onclick="changePage(\'prev\')"><i class="fas fa-chevron-left"></i></button>';
+      
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+          html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+          html += '<button class="page-btn" disabled>...</button>';
+        }
+      }
+      
+      html += '<button class="page-btn" onclick="changePage(\'next\')"><i class="fas fa-chevron-right"></i></button>';
+      
+      pagination.innerHTML = html;
+    }
+
+    window.changePage = function(page) {
+      const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+      
+      if (page === 'prev') {
+        if (currentPage > 1) currentPage--;
+      } else if (page === 'next') {
+        if (currentPage < totalPages) currentPage++;
+      } else {
+        currentPage = page;
+      }
+      
+      displayHistory();
+    };
+
+    window.exportData = function() {
+      if (filteredHistory.length === 0) {
+        alert('No data to export');
+        return;
+      }
+      
+      const headers = ['Order ID', 'Customer', 'Waste Type', 'Weight (kg)', 'Date', 'Points Given'];
+      const rows = filteredHistory.map(item => [
+        item.orderId || item.id.slice(0, 8),
+        item.customerName || 'N/A',
+        item.wasteType || 'N/A',
+        item.weight || 0,
+        item.date,
+        item.points || 0
+      ]);
+      
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `collector_history_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    };
+
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      if (show) {
+        spinner.classList.add('active');
+      } else {
+        spinner.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

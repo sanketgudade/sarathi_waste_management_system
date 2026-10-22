@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Requests - Sarathi Waste Management</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    /* Your existing styles remain the same */
+    :root {
+      --citizen-primary: #2ecc71;
+      --citizen-secondary: #27ae60;
+      --citizen-accent: #f1c40f;
+      --citizen-gradient: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #2ecc71;
+      background: #e8f5e9;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .logo span {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .nav-menu {
+      padding: 20px 0;
+    }
+
+    .nav-menu ul {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 25px;
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-link i {
+      width: 24px;
+      font-size: 18px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      background: #e8f5e9;
+      border-left-color: #2ecc71;
+      color: #2ecc71;
+    }
+
+    .sidebar-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      background: var(--citizen-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: #1f2937;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .user-email {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 12px;
+      background: #fee2e2;
+      border: none;
+      color: #dc2626;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 30px;
+    }
+
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      color: #1f2937;
+      margin-bottom: 5px;
+    }
+
+    .header-left p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .header-right {
+      position: relative;
+    }
+
+    .notification-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      font-size: 20px;
+      color: #1f2937;
+      transition: all 0.3s ease;
+    }
+
+    .notification-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ef4444;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      border-radius: 20px;
+      min-width: 20px;
+    }
+
+    .notification-dropdown {
+      display: none;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      width: 320px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+
+    .notification-dropdown.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    .notification-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      color: #1f2937;
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: #2ecc71;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 15px 20px;
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background 0.3s ease;
+    }
+
+    .notification-item:hover {
+      background: #f9fafb;
+    }
+
+    .notification-item.unread {
+      background: #e8f5e9;
+    }
+
+    .notification-item i {
+      font-size: 18px;
+      color: #2ecc71;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-text {
+      color: #1f2937;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .notification-time {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    /* Filter Tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      flex: 1;
+      min-width: 100px;
+      padding: 10px;
+      text-align: center;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #6b7280;
+      transition: all 0.3s ease;
+    }
+
+    .filter-tab:hover {
+      background: #f3f4f6;
+    }
+
+    .filter-tab.active {
+      background: #2ecc71;
+      color: white;
+    }
+
+    /* Requests Container */
+    .requests-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* Request Card */
+    .request-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .request-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .request-card.pending {
+      border-left-color: #f39c12;
+    }
+
+    .request-card.assigned {
+      border-left-color: #3498db;
+    }
+
+    .request-card.completed {
+      border-left-color: #2ecc71;
+    }
+
+    .request-card.cancelled {
+      border-left-color: #e74c3c;
+      opacity: 0.7;
+    }
+
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .request-id {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      font-family: monospace;
+    }
+
+    .request-status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .status-assigned {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .status-completed {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .request-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-item i {
+      width: 20px;
+      color: #2ecc71;
+      font-size: 16px;
+    }
+
+    .detail-content {
+      flex: 1;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: #6b7280;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .location-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #e8f5e9;
+      color: #2ecc71;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 5px;
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-track {
+      padding: 8px 16px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-track:hover {
+      background: #27ae60;
+    }
+
+    .btn-cancel {
+      padding: 8px 16px;
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+      background: #fecaca;
+    }
+
+    .btn-view {
+      padding: 8px 16px;
+      background: #f3f4f6;
+      color: #1f2937;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-view:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-qr {
+      padding: 8px 16px;
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-qr:hover {
+      background: #7c3aed;
+    }
+
+    .btn-print {
+      padding: 8px 16px;
+      background: #f39c12;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-print:hover {
+      background: #e67e22;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 12px;
+    }
+
+    .empty-state i {
+      font-size: 60px;
+      color: #2ecc71;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 20px;
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    .btn-schedule {
+      background: var(--citizen-gradient);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-schedule:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+    }
+
+    /* Invoice Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #2ecc71;
+    }
+
+    .modal-header .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--citizen-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: white;
+      font-size: 30px;
+    }
+
+    .modal-header h2 {
+      color: #1f2937;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .modal-header p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .invoice-details {
+      margin-bottom: 20px;
+    }
+
+    .invoice-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .invoice-label {
+      width: 120px;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .invoice-label i {
+      width: 20px;
+      color: #2ecc71;
+      margin-right: 8px;
+    }
+
+    .invoice-value {
+      flex: 1;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .invoice-qr {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .invoice-footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-print-invoice {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .btn-print-invoice:hover {
+      background: #27ae60;
+    }
+
+    .btn-close {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+
+    .btn-close:hover {
+      background: #e5e7eb;
+    }
+
+    /* QR Modal */
+    .qr-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .qr-modal.active {
+      display: flex;
+    }
+
+    .qr-modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .qr-modal-content h3 {
+      margin-bottom: 20px;
+      color: #1f2937;
+    }
+
+    .qr-modal-close {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Action Bar */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      justify-content: flex-end;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: var(--citizen-gradient);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading-spinner.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2ecc71;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 20px;
+      }
+
+      .mobile-menu-toggle {
+        display: block;
+      }
+
+      .filter-tabs {
+        flex-direction: column;
+      }
+
+      .filter-tab {
+        width: 100%;
+      }
+
+      .top-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .request-details {
+        grid-template-columns: 1fr;
+      }
+
+      .request-actions {
+        flex-direction: column;
+      }
+
+      .btn-track,
+      .btn-cancel,
+      .btn-view,
+      .btn-qr,
+      .btn-print {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .action-bar {
+        flex-direction: column;
+      }
+
+      .invoice-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .invoice-label {
+        width: 100%;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #invoiceModal,
+      #invoiceModal * {
+        visibility: visible;
+      }
+
+      #invoiceModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+      }
+
+      .modal-actions {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fas fa-recycle"></i>
+          <span>Sarathi Citizen</span>
+        </div>
+      </div>
+
+      <div class="nav-menu">
+        <ul>
+          <li><a href="citizen_dashboard.html" class="nav-link">
+              <i class="fas fa-home"></i><span>Dashboard</span></a></li>
+          <li><a href="citizen_request_pickup.html" class="nav-link">
+              <i class="fas fa-calendar-plus"></i><span>Request Pickup</span></a></li>
+          <li><a href="citizen_track_collector.html" class="nav-link">
+              <i class="fas fa-map-marked-alt"></i><span>Track Collector</span></a></li>
+          <li><a href="citizen_my_requests.html" class="nav-link active">
+              <i class="fas fa-list-alt"></i><span>My Requests</span></a></li>
+          <li><a href="citizen_scan_garbage.html" class="nav-link">
+              <i class="fas fa-camera"></i><span>Scan Garbage</span></a></li>
+          <li><a href="citizen_history.html" class="nav-link">
+              <i class="fas fa-history"></i><span>History</span></a></li>
+          <li><a href="citizen_complaints.html" class="nav-link">
+              <i class="fas fa-exclamation-circle"></i><span>Complaints</span></a></li>
+          <li><a href="citizen_profile.html" class="nav-link">
+              <i class="fas fa-user-circle"></i><span>Profile</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Loading...</span>
+            <span class="user-email" id="userEmail">Loading...</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1 class="page-title">My Requests</h1>
+          <p class="page-subtitle">View and manage all your pickup requests</p>
+        </div>
+        <div class="header-right">
+          <button class="notification-btn" onclick="toggleNotifications()">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationBadge">0</span>
+          </button>
+          <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-header">
+              <h3>Notifications</h3>
+              <button class="mark-read-btn" onclick="markAllRead()">Mark all as read</button>
+            </div>
+            <div class="notification-list" id="notificationList">
+              <div class="notification-item">
+                <i class="fas fa-spinner fa-pulse"></i>
+                <div class="notification-content">
+                  <p class="notification-text">Loading notifications...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterRequests('all')"><i class="fas fa-globe"></i> All</button>
+        <button class="filter-tab" onclick="filterRequests('pending')"><i class="fas fa-clock"></i> Pending</button>
+        <button class="filter-tab" onclick="filterRequests('assigned')"><i class="fas fa-user-check"></i>
+          Assigned</button>
+        <button class="filter-tab" onclick="filterRequests('completed')"><i class="fas fa-check-circle"></i>
+          Completed</button>
+        <button class="filter-tab" onclick="filterRequests('cancelled')"><i class="fas fa-times-circle"></i>
+          Cancelled</button>
+      </div>
+
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <button class="btn-view" onclick="forceRefresh()">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+
+      <!-- Loading Spinner -->
+      <div id="loadingSpinner" class="loading-spinner active">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; color: #6b7280;">Loading your requests...</p>
+      </div>
+
+      <!-- Requests Container -->
+      <div id="requestsContainer" class="requests-container" style="display: none;"></div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fas fa-clipboard-list"></i>
+        <h3>No Requests Found</h3>
+        <p>You haven't made any pickup requests yet.<br>Schedule your first waste collection now!</p>
+        <a href="citizen_request_pickup.html" class="btn-schedule">
+          <i class="fas fa-calendar-plus"></i> Schedule Pickup
+        </a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Invoice Modal -->
+  <div id="invoiceModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="logo-icon">
+          <i class="fas fa-recycle"></i>
+        </div>
+        <h2>SARATHI WASTE MANAGEMENT</h2>
+        <p>Service Invoice</p>
+      </div>
+
+      <div id="invoiceDetails" class="invoice-details">
+        <!-- Invoice content will be inserted here -->
+      </div>
+
+      <div id="invoiceQr" class="invoice-qr">
+        <!-- QR code will be inserted here -->
+      </div>
+
+      <div class="invoice-footer">
+        <p><i class="fas fa-regular fa-clock"></i> Generated on: <span id="invoiceDate"></span></p>
+        <p>Thank you for using Sarathi Waste Management</p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-print-invoice" onclick="printInvoice()">
+          <i class="fas fa-print"></i> Print Invoice
+        </button>
+        <button class="btn-close" onclick="closeInvoiceModal()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Modal -->
+  <div id="qrModal" class="qr-modal">
+    <div class="qr-modal-content">
+      <h3><i class="fas fa-qrcode"></i> Your QR Code</h3>
+      <div id="modalQrcode" style="display: flex; justify-content: center; margin-bottom: 20px;"></div>
+      <p id="modalOrderId" style="margin-bottom: 20px; font-family: monospace;"></p>
+      <button class="btn-primary" onclick="downloadModalQR()" style="margin-bottom: 10px; width: 100%;">
+        <i class="fas fa-download"></i> Download QR
+      </button>
+      <button class="qr-modal-close" onclick="closeQRModal()"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </div>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    // Import Firebase modules
+    import { auth, db } from './js/firebase-config.js';
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+    import {
+      collection,
+      doc,
+      getDoc,
+      getDocs,
+      query,
+      where,
+      updateDoc,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+    // Global variables
+    let currentUser = null;
+    let currentUserData = null;
+    let allRequests = [];
+
+    // Check authentication
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Verify user is citizen
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists() || userDoc.data().userType !== 'citizen') {
+        alert('Unauthorized access!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = user;
+      currentUserData = userDoc.data();
+
+      // Update user profile in sidebar
+      document.getElementById('userName').textContent = currentUserData.name || 'Citizen User';
+      document.getElementById('userEmail').textContent = user.email;
+
+      // Load requests
+      await loadRequests();
+
+      // Load notifications
+      loadNotifications();
+    });
+
+    // Logout function
+    window.logout = async function () {
+      try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('Error logging out: ' + error.message);
+      }
+    };
+
+    // Toggle sidebar on mobile
+    window.toggleSidebar = function () {
+      document.getElementById('sidebar').classList.toggle('active');
+    };
+
+    // Toggle Notifications
+    window.toggleNotifications = function () {
+      const dropdown = document.getElementById('notificationDropdown');
+      dropdown.classList.toggle('show');
+    };
+
+    // Force Refresh
+    window.forceRefresh = function () {
+      loadRequests();
+    };
+
+    // Load Notifications
+    async function loadNotifications() {
+      try {
+        const notificationsQuery = query(
+          collection(db, "notifications"),
+          where("userId", "==", currentUser.uid)
+        );
+        const notificationsSnapshot = await getDocs(notificationsQuery);
+
+        const notificationList = document.getElementById('notificationList');
+        const badge = document.getElementById('notificationBadge');
+
+        if (notificationsSnapshot.empty) {
+          notificationList.innerHTML = `
+            <div class="notification-item">
+              <i class="fas fa-bell-slash"></i>
+              <div class="notification-content">
+                <p class="notification-text">No notifications</p>
+              </div>
+            </div>
+          `;
+          badge.textContent = '0';
+          return;
+        }
+
+        let unreadCount = 0;
+        let html = '';
+        notificationsSnapshot.forEach(doc => {
+          const notif = doc.data();
+          const unreadClass = notif.read ? '' : 'unread';
+          if (!notif.read) unreadCount++;
+
+          const date = notif.createdAt ? new Date(notif.createdAt.toDate()).toLocaleDateString() : 'N/A';
+
+          html += `
+            <div class="notification-item ${unreadClass}" onclick="markNotificationRead('${doc.id}')">
+              <i class="fas ${notif.icon || 'fa-bell'}"></i>
+              <div class="notification-content">
+                <p class="notification-text">${notif.message}</p>
+                <span class="notification-time">${date}</span>
+              </div>
+            </div>
+          `;
+        });
+        notificationList.innerHTML = html;
+        badge.textContent = unreadCount;
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      }
+    }
+
+    // Mark notification as read
+    window.markNotificationRead = async function (notificationId) {
+      try {
+        await updateDoc(doc(db, "notifications", notificationId), {
+          read: true
+        });
+        loadNotifications();
+      } catch (error) {
+        console.error('Error marking notification read:', error);
+      }
+    };
+
+    // Mark all as read
+    window.markAllRead = async function () {
+      try {
+        const notificationsQuery = query(
+          collection(db, "notifications"),
+          where("userId", "==", currentUser.uid),
+          where("read", "==", false)
+        );
+        const snapshot = await getDocs(notificationsQuery);
+
+        const promises = [];
+        snapshot.forEach(doc => {
+          promises.push(updateDoc(doc.ref, { read: true }));
+        });
+
+        await Promise.all(promises);
+        loadNotifications();
+      } catch (error) {
+        console.error('Error marking all read:', error);
+      }
+    };
+
+    // Load requests
+    async function loadRequests() {
+      showLoading(true);
+
+      try {
+        console.log('Loading requests for user:', currentUser.uid);
+
+        const ordersQuery = query(
+          collection(db, "orders"),
+          where("userId", "==", currentUser.uid)
+        );
+
+        const ordersSnapshot = await getDocs(ordersQuery);
+
+        console.log('Query executed, found:', ordersSnapshot.size, 'documents');
+
+        allRequests = [];
+        ordersSnapshot.forEach(doc => {
+          const data = doc.data();
+
+          // Handle timestamp
+          let createdAt = data.createdAt;
+          if (createdAt && createdAt.toDate) {
+            createdAt = createdAt.toDate();
+          }
+
+          allRequests.push({
+            id: doc.id,
+            ...data,
+            createdAt: createdAt
+          });
+        });
+
+        // Sort manually by createdAt (newest first)
+        allRequests.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
+        });
+
+        console.log('Total requests loaded:', allRequests.length);
+
+        displayRequests('all');
+      } catch (error) {
+        console.error('Error loading requests:', error);
+        showLoading(false);
+      }
+    }
+
+    // Display requests based on filter
+    function displayRequests(filter) {
+      const container = document.getElementById('requestsContainer');
+      const emptyState = document.getElementById('emptyState');
+      const loadingSpinner = document.getElementById('loadingSpinner');
+
+      let filteredRequests = allRequests;
+      if (filter !== 'all') {
+        filteredRequests = allRequests.filter(req => req.status === filter);
+      }
+
+      if (filteredRequests.length === 0) {
+        loadingSpinner.classList.remove('active');
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      let html = '';
+
+      filteredRequests.forEach(request => {
+        const statusClass = request.status || 'pending';
+        const statusText = request.status ? request.status.charAt(0).toUpperCase() + request.status.slice(1) : 'Pending';
+
+        // Get waste type icon
+        let wasteIcon = 'fa-trash-alt';
+        if (request.wasteType === 'wet') wasteIcon = 'fa-droplet';
+        else if (request.wasteType === 'dry') wasteIcon = 'fa-recycle';
+        else if (request.wasteType === 'e-waste') wasteIcon = 'fa-battery-full';
+        else if (request.wasteType === 'hazardous') wasteIcon = 'fa-triangle-exclamation';
+        else if (request.wasteType === 'mixed') wasteIcon = 'fa-trash';
+
+        const date = request.preferredDate || (request.createdAt ? new Date(request.createdAt).toLocaleDateString() : 'N/A');
+
+        // Check if location exists
+        const hasLocation = request.latitude && request.longitude;
+
+        html += `
+          <div class="request-card ${statusClass}">
+            <div class="request-header">
+              <span class="request-id"><i class="fas fa-hashtag"></i> ${request.orderId || request.id.slice(0, 8)}</span>
+              <span class="request-status status-${statusClass}">${statusText}</span>
+            </div>
+            
+            <div class="request-details">
+              <div class="detail-item">
+                <i class="fas ${wasteIcon}"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Waste Type</span>
+                  <span class="detail-value">${request.wasteType || 'N/A'}</span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-weight-scale"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Weight</span>
+                  <span class="detail-value">${request.weight || 0} kg</span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-calendar"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Date</span>
+                  <span class="detail-value">${date}</span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Time</span>
+                  <span class="detail-value">${request.preferredTime || 'N/A'}</span>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Location</span>
+                  <span class="detail-value">
+                    ${request.address ? request.address.substring(0, 30) + '...' : 'N/A'}
+                    ${hasLocation ? '<span class="location-badge"><i class="fas fa-map-pin"></i> GPS</span>' : ''}
+                  </span>
+                </div>
+              </div>
+              
+              ${request.collectorName ? `
+              <div class="detail-item">
+                <i class="fas fa-user"></i>
+                <div class="detail-content">
+                  <span class="detail-label">Collector</span>
+                  <span class="detail-value">${request.collectorName}</span>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+            
+            <div class="request-actions">
+              ${request.status === 'assigned' ? `
+                <button class="btn-track" onclick="trackOrder('${request.orderId || request.id}')">
+                  <i class="fas fa-map-marked-alt"></i> Track
+                </button>
+              ` : ''}
+              
+              ${(request.status === 'pending' || request.status === 'assigned') ? `
+                <button class="btn-cancel" onclick="cancelOrder('${request.id}', '${request.orderId}')">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              ` : ''}
+              
+              <button class="btn-view" onclick="viewInvoice('${request.id}')">
+                <i class="fas fa-file-invoice"></i> Invoice
+              </button>
+              
+              <button class="btn-qr" onclick="showQRCode('${request.orderId || request.id}')">
+                <i class="fas fa-qrcode"></i> QR
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      loadingSpinner.classList.remove('active');
+      container.style.display = 'flex';
+      emptyState.style.display = 'none';
+    }
+
+    // Filter requests
+    window.filterRequests = function (status) {
+      // Update active tab
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+
+      displayRequests(status);
+    };
+
+    // Track order
+    // Track order - updated to pass orderId via URL
+    window.trackOrder = function (orderId) {
+      window.location.href = `citizen_track_collector.html?orderId=${orderId}`;
+    };
+
+    // Cancel order
+    window.cancelOrder = async function (docId, orderId) {
+      if (confirm('Are you sure you want to cancel this request?')) {
+        try {
+          await updateDoc(doc(db, "orders", docId), {
+            status: 'cancelled'
+          });
+
+          alert('Request cancelled successfully!');
+          loadRequests();
+        } catch (error) {
+          console.error('Error cancelling order:', error);
+          alert('Error cancelling request: ' + error.message);
+        }
+      }
+    };
+
+    // View Invoice
+    window.viewInvoice = function (docId) {
+      const request = allRequests.find(r => r.id === docId);
+      if (!request) return;
+
+      // Format date
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      // Get waste type icon
+      let wasteIcon = 'fa-trash-alt';
+      if (request.wasteType === 'wet') wasteIcon = 'fa-droplet';
+      else if (request.wasteType === 'dry') wasteIcon = 'fa-recycle';
+      else if (request.wasteType === 'e-waste') wasteIcon = 'fa-battery-full';
+      else if (request.wasteType === 'hazardous') wasteIcon = 'fa-triangle-exclamation';
+      else if (request.wasteType === 'mixed') wasteIcon = 'fa-trash';
+
+      // Create invoice HTML
+      const invoiceHTML = `
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-hashtag"></i> Order ID:</span>
+          <span class="invoice-value">${request.orderId || docId.slice(0, 8)}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-user"></i> Customer:</span>
+          <span class="invoice-value">${request.customerName || request.userName || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-phone"></i> Phone:</span>
+          <span class="invoice-value">${request.phone || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-chart-bar"></i> Status:</span>
+          <span class="invoice-value" style="color: ${request.status === 'completed' ? '#2ecc71' : request.status === 'pending' ? '#f39c12' : '#3498db'}">${request.status || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas ${wasteIcon}"></i> Waste Type:</span>
+          <span class="invoice-value">${request.wasteType || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-weight-scale"></i> Weight:</span>
+          <span class="invoice-value">${request.weight || 0} kg</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-calendar"></i> Date:</span>
+          <span class="invoice-value">${request.preferredDate || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-clock"></i> Time:</span>
+          <span class="invoice-value">${request.preferredTime || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-map-marker-alt"></i> Address:</span>
+          <span class="invoice-value">${request.address || 'N/A'}</span>
+        </div>
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-mail-bulk"></i> Pincode:</span>
+          <span class="invoice-value">${request.pincode || 'N/A'}</span>
+        </div>
+        ${request.notes ? `
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-note-sticky"></i> Notes:</span>
+          <span class="invoice-value">${request.notes}</span>
+        </div>
+        ` : ''}
+        ${request.latitude && request.longitude ? `
+        <div class="invoice-row">
+          <span class="invoice-label"><i class="fas fa-location-dot"></i> Coordinates:</span>
+          <span class="invoice-value">${request.latitude}, ${request.longitude}</span>
+        </div>
+        ` : ''}
+      `;
+
+      document.getElementById('invoiceDetails').innerHTML = invoiceHTML;
+      document.getElementById('invoiceDate').textContent = formattedDate;
+
+      // Generate QR code for invoice
+      const qrContainer = document.getElementById('invoiceQr');
+      qrContainer.innerHTML = '';
+      new QRCode(qrContainer, {
+        text: JSON.stringify({
+          orderId: request.orderId || docId,
+          customer: request.customerName || request.userName,
+          type: request.wasteType,
+          weight: request.weight,
+          date: request.preferredDate
+        }),
+        width: 150,
+        height: 150
+      });
+
+      document.getElementById('invoiceModal').classList.add('active');
+    };
+
+    // Close Invoice Modal
+    window.closeInvoiceModal = function () {
+      document.getElementById('invoiceModal').classList.remove('active');
+    };
+
+    // Print Invoice
+    window.printInvoice = function () {
+      window.print();
+    };
+
+    // Show QR Code
+    window.showQRCode = function (orderId) {
+      const modal = document.getElementById('qrModal');
+      const qrContainer = document.getElementById('modalQrcode');
+
+      qrContainer.innerHTML = '';
+
+      new QRCode(qrContainer, {
+        text: JSON.stringify({
+          orderId: orderId,
+          userId: currentUser.uid,
+          timestamp: Date.now()
+        }),
+        width: 200,
+        height: 200
+      });
+
+      document.getElementById('modalOrderId').textContent = `Order: ${orderId}`;
+      modal.classList.add('active');
+    };
+
+    // Close QR Modal
+    window.closeQRModal = function () {
+      document.getElementById('qrModal').classList.remove('active');
+    };
+
+    // Download QR from modal
+    window.downloadModalQR = function () {
+      const canvas = document.querySelector('#modalQrcode canvas');
+      if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'sarathi-qr.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      }
+    };
+
+    // Helper Functions
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      if (show) {
+        spinner.classList.add('active');
+      } else {
+        spinner.classList.remove('active');
+      }
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function () {
+      // Close notifications when clicking outside
+      document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('notificationDropdown');
+        const btn = document.querySelector('.notification-btn');
+        if (!btn?.contains(event.target) && !dropdown?.contains(event.target)) {
+          dropdown?.classList.remove('show');
+        }
+      });
+
+      // Close modals when clicking outside
+      window.addEventListener('click', function (event) {
+        const invoiceModal = document.getElementById('invoiceModal');
+        const qrModal = document.getElementById('qrModal');
+
+        if (event.target === invoiceModal) {
+          invoiceModal.classList.remove('active');
+        }
+        if (event.target === qrModal) {
+          qrModal.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
